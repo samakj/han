@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Callable, Dict
 
 from paho.mqtt.client import Client as MQTTClient
@@ -10,6 +11,9 @@ from han_mqtt.handlers.SubscriptionHandler import SubscriptionHandler
 from han_mqtt.models.UserData import MqttUserData
 from han_mqtt.topics.TopicBlueprint import TopicBlueprint
 from han_mqtt.topics.default_topics import DEFAULT_TOPIC_BLUEPRINT
+
+LOG = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 class HanMqttClient(MQTTClient):
@@ -119,6 +123,7 @@ class HanMqttClient(MQTTClient):
         return self.connection_handler.remove_disconnect_handler(handler_id=handler_id)
 
     def run(self) -> None:
+        LOG.info("Starting MQTT client.")
         self.connection_handler.connect()
         self.subscription_handler.enact_subscriptions()
         self.loop_forever()
