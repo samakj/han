@@ -2,7 +2,6 @@ import logging
 from typing import Callable, Dict, List, Optional
 
 from paho.mqtt.client import Client as MQTTClient, MQTTMessage
-
 from han_mqtt.models.UserData import MqttUserData
 
 
@@ -10,7 +9,8 @@ LOG = logging.getLogger(__name__)
 
 
 class MessageHandler:
-    def __init__(self):
+    def __init__(self, client):
+        self.client = client
         self._topic_handler_map: Dict[str, Dict[int, Callable]] = {}
 
     def add_topic_message_handler(self, topic: str, handler: Callable) -> int:
@@ -38,10 +38,10 @@ class MessageHandler:
             del self._topic_handler_map[topic][handler_id]
 
     def handle_message(
-        self, client: MQTTClient, userdata: MqttUserData, message: MQTTMessage
+        self, _: MQTTClient, userdata: MqttUserData, message: MQTTMessage
     ) -> None:
         for handler in self.get_topic_message_handlers(topic=message.topic):
             try:
-                handler(client=client, user_data=userdata, message=message)
+                handler(client=self.client, user_data=userdata, message=message)
             except Exception as Error:
                 LOG.exception(Error)

@@ -4,14 +4,13 @@ from typing import Any, Callable, Dict, List, Optional
 
 from paho.mqtt.client import Client as MQTTClient
 from paho.mqtt.client import MQTTMessageInfo
-
 from han_mqtt.models.UserData import MqttUserData
 
 LOG = logging.getLogger(__name__)
 
 
 class PublishHandler:
-    def __init__(self, client: MQTTClient):
+    def __init__(self, client):
         self.client = client
         self._topic_handler_map: Dict[str, Dict[int, Callable]] = {}
         self._mid_topic_map: Dict[int, str] = {}
@@ -58,14 +57,14 @@ class PublishHandler:
         return message_info
 
     def handle_publish(
-        self, client: MQTTClient, userdata: MqttUserData, mid: int
+        self, _: MQTTClient, userdata: MqttUserData, mid: int
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
 
         if topic is not None:
             for handler in self.get_topic_publish_handlers(topic=topic):
                 try:
-                    handler(client=client, user_data=userdata, mid=mid)
+                    handler(client=self.client, user_data=userdata, mid=mid)
                 except Exception as Error:
                     LOG.exception(Error)
 

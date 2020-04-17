@@ -12,28 +12,29 @@ from han_mqtt.topics.TopicBlueprint import TopicBlueprint
 from han_mqtt.topics.default_topics import DEFAULT_TOPIC_BLUEPRINT
 
 
-class HanMqttClient:
+class HanMqttClient(MQTTClient):
     def __init__(
         self, client_id: str, host: str, port: int, user_data: MqttUserData = None
     ):
-        self.user_data = user_data
-        self.message_handler = MessageHandler()
+        super(HanMqttClient, self).__init__(client_id=client_id, userdata=user_data)
 
-        self.client = MQTTClient(client_id=client_id, userdata=user_data)
+        self.user_data = user_data
+        self.message_handler = MessageHandler(client=self)
+
         self.connection_start = None
 
         self.connection_handler = ConnectionHandler(
-            client=self.client, host=host, port=port
+            client=self, host=host, port=port
         )
-        self.publish_handler = PublishHandler(client=self.client)
-        self.subscription_handler = SubscriptionHandler(client=self.client)
+        self.publish_handler = PublishHandler(client=self)
+        self.subscription_handler = SubscriptionHandler(client=self)
 
-        self.client.on_message = self.message_handler.handle_message
-        self.client.on_publish = self.publish_handler.handle_publish
-        self.client.on_subscribe = self.subscription_handler.handle_subscribe
-        self.client.on_unsubscribe = self.subscription_handler.handle_unsubscribe
-        self.client.on_connect = self.connection_handler.handle_connect
-        self.client.on_disconnect = self.connection_handler.handle_disconnect
+        self.on_message = self.message_handler.handle_message
+        self.on_publish = self.publish_handler.handle_publish
+        self.on_subscribe = self.subscription_handler.handle_subscribe
+        self.on_unsubscribe = self.subscription_handler.handle_unsubscribe
+        self.on_connect = self.connection_handler.handle_connect
+        self.on_disconnect = self.connection_handler.handle_disconnect
 
         self.add_topic_blueprint(DEFAULT_TOPIC_BLUEPRINT)
 
@@ -44,7 +45,7 @@ class HanMqttClient:
         options: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,
     ) -> None:
-        if self.client.is_connected():
+        if self.is_connected():
             self.subscription_handler.subscribe(
                 topic=topic, qos=qos, options=options, properties=properties
             )
@@ -59,6 +60,7 @@ class HanMqttClient:
         payload: Dict[str, Any] = None,
         qos: int = 0,
         retain: bool = False,
+        properties: Dict = None,
     ) -> MQTTMessageInfo:
         return self.publish_handler.publish(
             topic=topic, payload=payload, qos=qos, retain=retain
@@ -119,7 +121,7 @@ class HanMqttClient:
     def run(self) -> None:
         self.connection_handler.connect()
         self.subscription_handler.enact_subscriptions()
-        self.client.loop_forever()
+        self.loop_forever()
 
     def add_topic_blueprint(self, blueprint: TopicBlueprint, topic_prefix: str = ""):
         for topic in blueprint.topic_action_handlers:

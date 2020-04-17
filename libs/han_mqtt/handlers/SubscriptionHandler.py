@@ -2,14 +2,13 @@ import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from paho.mqtt.client import Client as MQTTClient
-
 from han_mqtt.models.UserData import MqttUserData
 
 LOG = logging.getLogger(__name__)
 
 
 class SubscriptionHandler:
-    def __init__(self, client: MQTTClient):
+    def __init__(self, client):
         self.client = client
         self.subscriptions = {}
         self._topic_subscribe_handler_map: Dict[str, Dict[int, Callable]] = {}
@@ -44,7 +43,7 @@ class SubscriptionHandler:
             "is_subscribed": True,
         }
         LOG.info(f"Subscribing to {topic}")
-        result, mid = self.client.subscribe(
+        result, mid = super(type(self.client), self.client).subscribe(
             topic=topic, qos=qos, options=options, properties=properties
         )
         self._mid_topic_map[mid] = topic
@@ -80,7 +79,7 @@ class SubscriptionHandler:
 
     def handle_subscribe(
         self,
-        client: MQTTClient,
+        _: MQTTClient,
         userdata: MqttUserData,
         mid: int,
         granted_qos: bool,
@@ -92,7 +91,7 @@ class SubscriptionHandler:
             for handler in self.get_topic_subscribe_handlers(topic=topic):
                 try:
                     handler(
-                        client=client,
+                        client=self.client,
                         user_data=userdata,
                         mid=mid,
                         granted_qos=granted_qos,
@@ -107,7 +106,7 @@ class SubscriptionHandler:
         for (topic, opts) in self.subscriptions.items():
             if not opts["is_subscribed"]:
                 LOG.info(f"Subscribing to {topic}")
-                result, mid = self.client.subscribe(
+                result, mid = super(type(self.client), self.client).subscribe(
                     topic=topic,
                     qos=opts["qos"],
                     options=opts["options"],
@@ -150,14 +149,14 @@ class SubscriptionHandler:
             del self._topic_unsubscribe_handler_map[topic][handler_id]
 
     def handle_unsubscribe(
-        self, client: MQTTClient, userdata: MqttUserData, mid: int
+        self, _: MQTTClient, userdata: MqttUserData, mid: int
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
 
         if topic is not None:
             for handler in self.get_topic_unsubscribe_handlers(topic=topic):
                 try:
-                    handler(client=client, user_data=userdata, mid=mid)
+                    handler(client=self.client, user_data=userdata, mid=mid)
                 except Exception as Error:
                     LOG.exception(Error)
 

@@ -1,15 +1,14 @@
 import logging
 from typing import Any, Callable, Dict, List, Optional
 
-from paho.mqtt.client import Client as MQTTClient
-
 from han_mqtt.models.UserData import MqttUserData
+from paho.mqtt.client import Client as MQTTClient
 
 LOG = logging.getLogger(__name__)
 
 
 class ConnectionHandler:
-    def __init__(self, client: MQTTClient, host: str, port: int):
+    def __init__(self, client, host: str, port: int):
         self.client = client
         self.host = host
         self.port = port
@@ -38,7 +37,7 @@ class ConnectionHandler:
 
     def handle_connect(
         self,
-        client: MQTTClient,
+        _: MQTTClient,
         userdata: MqttUserData,
         flags: Dict[str, Any],
         rc: int,
@@ -47,7 +46,7 @@ class ConnectionHandler:
         for handler in self.get_connect_handlers():
             try:
                 handler(
-                    client=client,
+                    client=self.client,
                     user_data=userdata,
                     flags=flags,
                     rc=rc,
@@ -79,13 +78,13 @@ class ConnectionHandler:
 
     def handle_disconnect(
         self,
-        client: MQTTClient,
+        _: MQTTClient,
         userdata: MqttUserData,
         rc: int,
         properties: Dict[str, Any] = None,
     ) -> None:
         for handler in self.get_disconnect_handlers():
             try:
-                handler(client=client, userdata=userdata, rc=rc, properties=properties)
+                handler(client=self.client, userdata=userdata, rc=rc, properties=properties)
             except Exception as Error:
                 LOG.exception(Error)
