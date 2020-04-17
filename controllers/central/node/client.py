@@ -14,3 +14,4 @@ def create_mqtt_client() -> HanMqttClient:
 
 
 client = create_mqtt_client()
+client.run()

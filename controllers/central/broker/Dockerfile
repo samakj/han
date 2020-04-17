@@ -1,8 +1,8 @@
 FROM han-mqtt:latest
 
-COPY ./data /mosquitto/config
-COPY ./data /mosquitto/data
-COPY ./log /mosquitto/log
+COPY data /mosquitto/config
+COPY data /mosquitto/data
+COPY log /mosquitto/log
 
 VOLUME /mosquitto/config
 VOLUME /mosquitto/data
