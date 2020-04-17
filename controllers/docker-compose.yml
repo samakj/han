@@ -1,0 +1,30 @@
+version: "3"
+services:
+  broker:
+    build: ./broker
+    container_name: broker
+    volumes:
+      - ./broker/config:/mosquitto/config
+      - ./broker/data:/mosquitto/data
+      - ./broker/log:/mosquitto/log
+    environment:
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - VIRTUAL_PORT=${BROKER_PORT}
+    ports:
+      - "127.0.0.1:${BROKER_PORT}:${BROKER_PORT}"
+  node_controller:
+    build: ./node
+    container_name: node_controller
+    volumes:
+      - ./node:/app
+      - ../libs:/libs
+    environment:
+      - BROKER_HOST=broker
+      - BROKER_PORT=${BROKER_PORT}
+      - FLASK_ENV=${FLASK_ENV}
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - PYTHONUNBUFFERED=1
+    links:
+      - broker
