@@ -18,7 +18,7 @@ bool motion;
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Starting thm_sensor sketch...");
+    Serial.println("Starting thm_sensor log string sketch...");
 
     pinMode(ONBOARD_LED_PIN, OUTPUT);
     digitalWrite(ONBOARD_LED_PIN, LOW);
