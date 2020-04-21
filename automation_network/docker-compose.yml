@@ -1,0 +1,29 @@
+version: "3"
+services:
+  message_broker:
+    build: message_broker
+    container_name: message_broker
+    volumes:
+      - ./message_broker/config:/mosquitto/config
+      - ./message_broker/data:/mosquitto/data
+      - ./message_broker/log:/mosquitto/log
+    environment:
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - VIRTUAL_PORT=${BROKER_PORT}
+    ports:
+      - "127.0.0.1:${BROKER_PORT}:${BROKER_PORT}"
+  message_client:
+    build: message_client
+    container_name: message_client
+    volumes:
+      - ./message_client:/app
+      - ../libs/python:/libs
+    environment:
+      - BROKER_HOST=message_broker
+      - BROKER_PORT=${BROKER_PORT}
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - PYTHONUNBUFFERED=1
+    links:
+      - message_broker

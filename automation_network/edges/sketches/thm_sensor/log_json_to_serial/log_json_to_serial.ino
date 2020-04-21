@@ -39,7 +39,7 @@ void loop()
 
     Serial.println(createReportJsonString(temperature, humidity, motion));
 
-    delay(2000);
+    delay(LOOP_DELAY);
 }
 
 String createReportJsonString(float temperature, float humidity, bool motion)

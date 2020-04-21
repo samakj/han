@@ -5,7 +5,7 @@ RUN apk add build-base
 RUN apk add postgresql-dev
 
 RUN mkdir /app
-COPY ./libs /libs
+COPY ./libs/python /libs
 COPY ./infra/tooling/python /tooling
 
 ENV PYTHONPATH=/app:/libs
