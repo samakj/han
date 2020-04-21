@@ -2,12 +2,11 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
+#include "config.h"
+
 //Constants
-#define DHT_SENSOR_PIN 2
 #define DHT_TYPE DHT22
 #define LOOP_DELAY 2000
-#define MOTION_SENSOR_PIN 4
-#define NODE_ID "fa75e1"
 #define ONBOARD_LED_PIN 13
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);

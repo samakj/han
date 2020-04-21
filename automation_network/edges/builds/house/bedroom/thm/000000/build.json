@@ -1,0 +1,8 @@
+{
+    "sketch": "thm_sensor/log_json_to_serial",
+    "node_id": "000000",
+    "variables": {
+        "MOTION_SENSOR_PIN": 4,
+        "DHT_SENSOR_PIN": 2
+    }
+}

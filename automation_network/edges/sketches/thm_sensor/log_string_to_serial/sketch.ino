@@ -1,10 +1,10 @@
 //Libraries
-#include <DHT.h>;
+#include <DHT.h>
+
+#include "config.h"
 
 //Constants
 #define ONBOARD_LED_PIN 13
-#define MOTION_SENSOR_PIN 4
-#define DHT_SENSOR_PIN 2
 #define DHT_TYPE DHT22
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);

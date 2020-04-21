@@ -5,3 +5,7 @@ venv/
 .idea/
 __pycache__/
 *.py[cod]
+
+# Built arduino files
+automation_network/edges/builds/**/*.ino
+automation_network/edges/builds/**/config.h
