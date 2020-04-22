@@ -1,4 +1,4 @@
-FROM samsite-python:latest
+FROM han-python:latest
 
 COPY ./ /app
 VOLUME /app
