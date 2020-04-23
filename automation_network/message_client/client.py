@@ -3,6 +3,7 @@ import os
 from han_mqtt import HanMqttClient
 
 from topics.report import REPORT_TOPIC_BLUEPRINT
+from topics.meta import META_TOPIC_BLUEPRINT
 
 
 def create_mqtt_client() -> HanMqttClient:
@@ -13,6 +14,7 @@ def create_mqtt_client() -> HanMqttClient:
     )
 
     client.add_topic_blueprint(REPORT_TOPIC_BLUEPRINT, topic_prefix="/v0")
+    client.add_topic_blueprint(META_TOPIC_BLUEPRINT, topic_prefix="/v0")
 
     return client
 
