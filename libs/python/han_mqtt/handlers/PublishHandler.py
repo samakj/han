@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from paho.mqtt.client import Client as MQTTClient
 from paho.mqtt.client import MQTTMessageInfo
@@ -45,7 +45,7 @@ class PublishHandler:
     def publish(
         self,
         topic: str,
-        payload: Dict[str, Any] = None,
+        payload: Optional[Union[Dict[str, Any], str]] = None,
         qos: int = 0,
         retain: bool = False,
     ) -> MQTTMessageInfo:
@@ -60,6 +60,7 @@ class PublishHandler:
         self, _: MQTTClient, userdata: MqttUserData, mid: int
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
+        userdata = userdata or MqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_publish_handlers(topic=topic):

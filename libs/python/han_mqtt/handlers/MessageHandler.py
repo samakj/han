@@ -40,6 +40,7 @@ class MessageHandler:
     def handle_message(
         self, _: MQTTClient, userdata: MqttUserData, message: MQTTMessage
     ) -> None:
+        userdata = userdata or MqttUserData()
         for handler in self.get_topic_message_handlers(topic=message.topic):
             try:
                 handler(client=self.client, user_data=userdata, message=message)

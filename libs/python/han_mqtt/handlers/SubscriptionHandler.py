@@ -86,6 +86,7 @@ class SubscriptionHandler:
         properties: Optional[Dict[str, Any]] = None,
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
+        userdata = userdata or MqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_subscribe_handlers(topic=topic):
@@ -152,6 +153,7 @@ class SubscriptionHandler:
         self, _: MQTTClient, userdata: MqttUserData, mid: int
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
+        userdata = userdata or MqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_unsubscribe_handlers(topic=topic):

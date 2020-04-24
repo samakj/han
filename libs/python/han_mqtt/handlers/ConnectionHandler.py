@@ -43,6 +43,7 @@ class ConnectionHandler:
         rc: int,
         properties: Dict[str, Any] = None,
     ) -> None:
+        userdata = userdata or MqttUserData()
         for handler in self.get_connect_handlers():
             try:
                 handler(
@@ -83,6 +84,7 @@ class ConnectionHandler:
         rc: int,
         properties: Dict[str, Any] = None,
     ) -> None:
+        userdata = userdata or MqttUserData()
         for handler in self.get_disconnect_handlers():
             try:
                 handler(client=self.client, userdata=userdata, rc=rc, properties=properties)
