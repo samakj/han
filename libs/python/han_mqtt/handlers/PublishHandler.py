@@ -45,12 +45,15 @@ class PublishHandler:
     def publish(
         self,
         topic: str,
-        payload: Optional[Union[Dict[str, Any], str]] = None,
+        payload: Optional[Union[Dict[str, Any], str, int]] = None,
         qos: int = 0,
         retain: bool = False,
     ) -> MQTTMessageInfo:
-        message_info = self.client.publish(
-            topic=topic, payload=json.dumps(payload), qos=qos, retain=retain
+        message_info = super(type(self.client), self.client).publish(
+            topic=topic,
+            payload=json.dumps(payload) if isinstance(payload, dict) else payload,
+            qos=qos,
+            retain=retain
         )
         self.add_mid_topic_mapping(mid=message_info.mid, topic=topic)
 

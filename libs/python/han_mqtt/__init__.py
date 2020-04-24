@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional, Union
 
 from paho.mqtt.client import Client as MQTTClient
 from paho.mqtt.client import MQTTMessageInfo
@@ -61,7 +61,7 @@ class HanMqttClient(MQTTClient):
     def publish(
         self,
         topic: str,
-        payload: Dict[str, Any] = None,
+        payload: Optional[Union[Dict[str, Any], str, int]] = None,
         qos: int = 0,
         retain: bool = False,
         properties: Dict = None,
