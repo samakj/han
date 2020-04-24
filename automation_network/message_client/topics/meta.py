@@ -6,6 +6,8 @@ from han_mqtt import HanMqttClient, MqttUserData
 from han_mqtt.topics.TopicBlueprint import TopicBlueprint
 
 LOG = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+
 META_TOPIC_BLUEPRINT = TopicBlueprint()
 
 
