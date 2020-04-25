@@ -18,4 +18,4 @@ def edge_init_meta(message: MQTTMessage, client: HanMqttClient, user_data: MqttU
     if message.payload.get("command") == "INIT_META":
         name = user_data.client_id or user_data.username if user_data else None
         LOG.info(f"{name or '< unknown >'} requested init meta data.")
-        client.publish("/v0/meta", {"timestamp": int(time())})
+        client.coercive_publish("/v0/meta", {"timestamp": int(time())})

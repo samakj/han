@@ -42,14 +42,14 @@ class PublishHandler:
         if self.get_topic_publish_handler(topic=topic, handler_id=handler_id) is not None:
             del self._topic_handler_map[topic][handler_id]
 
-    def publish(
+    def coercive_publish(
         self,
         topic: str,
         payload: Optional[Union[Dict[str, Any], str, int]] = None,
         qos: int = 0,
         retain: bool = False,
     ) -> MQTTMessageInfo:
-        message_info = super(type(self.client), self.client).publish(
+        message_info = self.client.publish(
             topic=topic,
             payload=json.dumps(payload) if isinstance(payload, dict) else payload,
             qos=qos,

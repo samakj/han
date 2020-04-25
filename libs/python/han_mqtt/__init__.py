@@ -58,7 +58,7 @@ class HanMqttClient(MQTTClient):
                 topic=topic, qos=qos, options=options, properties=properties
             )
 
-    def publish(
+    def coercive_publish(
         self,
         topic: str,
         payload: Optional[Union[Dict[str, Any], str, int]] = None,
@@ -66,7 +66,7 @@ class HanMqttClient(MQTTClient):
         retain: bool = False,
         properties: Dict = None,
     ) -> MQTTMessageInfo:
-        return self.publish_handler.publish(
+        return self.publish_handler.coercive_publish(
             topic=topic, payload=payload, qos=qos, retain=retain
         )
 
