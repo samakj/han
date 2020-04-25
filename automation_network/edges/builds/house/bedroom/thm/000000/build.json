@@ -1,8 +1,5 @@
 {
-    "sketch": "thm_sensor/log_jwt_to_serial",
+    "sketch": "thm_sensor/attach_to_mqtt",
     "node_id": "000000",
-    "variables": {
-        "MOTION_SENSOR_PIN": 4,
-        "DHT_SENSOR_PIN": 2
-    }
+    "variables": {}
 }
