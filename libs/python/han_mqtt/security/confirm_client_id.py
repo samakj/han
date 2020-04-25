@@ -18,12 +18,13 @@ def confirm_client_id(
 
             if message.payload:
                 client_id = user_data.client_id if user_data is not None else None
+                meta_id = message.payload.get("meta", {}).get("id", None)
 
-                if message.payload.get("node_id", None) != user_data.client_id:
+                if not client_id or meta_id != client_id:
                     if log_on_error:
                         LOG.error(
                             f"{datetime.utcnow()}: Invalid payload, bad id, sent to '{message.topic}'. "
-                            f"client_id: {client_id}."
+                            f"client_id: {client_id}, meta_id: {meta_id}."
                         )
                 else:
                     is_valid = True

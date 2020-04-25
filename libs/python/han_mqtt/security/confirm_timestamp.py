@@ -21,7 +21,7 @@ def confirm_timestamp(
             if message.payload:
                 client_id = user_data.client_id if user_data is not None else None
 
-                if datetime.utcnow().timestamp() - message.payload.get("timestamp", 0) > payload_expiry:
+                if datetime.utcnow().timestamp() - message.payload.get("meta", {}).get("t", 0) > payload_expiry:
                     if log_on_error:
                         LOG.error(
                             f"{datetime.utcnow()}: Expired payload sent to '{message.topic}'. "
