@@ -13,15 +13,3 @@ services:
       - VIRTUAL_PORT=${BROKER_PORT}
     ports:
       - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
-  message_client:
-    build: message_client
-    container_name: message_client
-    volumes:
-      - ./message_client:/app
-      - ../libs/python:/libs
-    environment:
-      - BROKER_HOST=${BROKER_HOST}
-      - BROKER_PORT=${BROKER_PORT}
-      - LC_ALL=${LANG}
-      - LANG=${LANG}
-      - PYTHONUNBUFFERED=1
