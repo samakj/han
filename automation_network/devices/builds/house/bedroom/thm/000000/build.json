@@ -1,5 +1,7 @@
 {
-    "sketch": "thm_sensor/attach_to_mqtt",
+    "sketch": "thm_sensor/get_meta_from_mqtt",
     "node_id": "000000",
-    "variables": {}
+    "variables": {
+        "META_TOPIC": "/v0/meta"
+    }
 }
