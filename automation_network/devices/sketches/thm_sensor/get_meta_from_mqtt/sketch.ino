@@ -137,13 +137,21 @@ String createMetaRequestJsonString()
 
 void handleMetaResponse(char* payload)
 {
+    char* payloadString;
+    bool decodeError = jwt.decodeJWT(payloadString, payload, strlen(payload));
+
+    if (decodeError) {
+        Serial.print("Invalid jwt received.");
+        return;
+    }
+
     const size_t capacity = JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2) + 64;
     DynamicJsonDocument data(capacity);
-    DeserializationError error = deserializeJson(data, payload);
+    DeserializationError deserialisationError = deserializeJson(data, payloadString);
 
-    if (error) {
+    if (deserialisationError) {
         Serial.print("Invalid json recieved: ");
-        Serial.println(error.c_str());
+        Serial.println(deserialisationError.c_str());
         return;
     }
 

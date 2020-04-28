@@ -1,3 +1,4 @@
+import jwt
 import logging
 from time import time
 
@@ -38,4 +39,4 @@ def get_info(message: MQTTMessage, client: HanMqttClient, **_) -> None:
         LOG.error(f"Meta requested with no valid keys.")
         return
 
-    client.coercive_publish("/v0/meta", response_info)
+    client.coercive_publish("/v0/meta", jwt.encode(response_info, key=SECRET_KEY))
