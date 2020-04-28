@@ -26,7 +26,11 @@ long lastMeasurementMillis = -MEASUREMENT_INTERVAL;
 void setup()
 {
     Serial.begin(115200);
-    Serial.println("Starting thm_sensor log json sketch...");
+    Serial.println("");
+    Serial.println("*******************************************");
+    Serial.println("* ~ Starting thm_sensor log json sketch ~ *");
+    Serial.println("*******************************************");
+    Serial.println("");
 
     connectToWifi();
 
@@ -40,6 +44,8 @@ void setup()
 
 void loop()
 {
+    connectToWifi();
+    connectToMqtt();
     mqttClient.loop();
 
     if (initialTimestamp != -1) {
@@ -71,6 +77,7 @@ void connectToWifi()
         Serial.print("Connecting to ");
         Serial.print(WIFI_SSID);
 
+        WiFi.mode(WIFI_STA);
         WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
         while (WiFi.status() != WL_CONNECTED) {
@@ -122,9 +129,8 @@ String createMetaRequestJsonString()
     const size_t capacity = JSON_ARRAY_SIZE(1) + 2 * JSON_OBJECT_SIZE(2) + 64;
     DynamicJsonDocument doc(capacity);
 
-    JsonObject meta = doc.createNestedObject("meta");
-    meta["id"] = NODE_ID;
-    meta["s"] = salt(8);
+    doc["_id"] = NODE_ID;
+    doc["_s"] = salt(8);
 
     JsonArray keys = doc.createNestedArray("k");
     keys.add("t");
@@ -138,7 +144,7 @@ String createMetaRequestJsonString()
 void handleMetaResponse(char* payload)
 {
     char* payloadString;
-    bool decodeError = jwt.decodeJWT(payloadString, payload, strlen(payload));
+    bool decodeError = jwt.decodeJWT(payload, payloadString, strlen(payload));
 
     if (decodeError) {
         Serial.print("Invalid jwt received.");
@@ -152,12 +158,12 @@ void handleMetaResponse(char* payload)
     if (deserialisationError) {
         Serial.print("Invalid json recieved: ");
         Serial.println(deserialisationError.c_str());
+        Serial.println(payloadString);
         return;
     }
 
-    long timestamp = data["t"];
-
-    if (data["meta"]["id"] == NODE_ID) {
+    if (data["_id"] == NODE_ID) {
+        long timestamp = data["t"];
         initialTimestamp = timestamp - (millis() / 1000);
         Serial.println("Meta data handled, unsubscribing.");
         mqttClient.unsubscribe(META_TOPIC);
