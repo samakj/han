@@ -1,0 +1,36 @@
+version: "3"
+services:
+  devices_app:
+    build: ./app
+    container_name: devices_app
+    volumes:
+      - ./app:/app
+      - ../../libs:/libs
+    environment:
+      - DB_HOST=cms_db
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - FLASK_ENV=${FLASK_ENV}
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - VIRTUAL_PORT=${SERVICE_PORT}
+    ports:
+      - "127.0.0.1:${SERVICE_PORT}:${SERVICE_PORT}"
+    links:
+      - devices_db
+  devices_db:
+    build: ./db
+    container_name: devices_db
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/backup:/backup
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_DBNAME=${DB_NAME}
+      - POSTGRES_PASS=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - VIRTUAL_PORT=${DB_PORT}
+    ports:
+      - "127.0.0.1:${DB_PORT}:${DB_PORT}"
