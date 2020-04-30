@@ -36,7 +36,18 @@ class PublishHandler:
         return self._topic_handler_map.get(topic, {}).get(handler_id, None)
 
     def get_topic_publish_handlers(self, topic: str) -> List[Callable]:
-        return list(self._topic_handler_map.get(topic, {}).values())
+        handlers = []
+
+        handlers.extend(self._topic_handler_map.get(topic, {}).values())
+
+        topic_split = topic.split("/")
+
+        while topic_split:
+            topic_split[-1] = "#"
+            handlers.extend(self._topic_handler_map.get("/".join(topic_split), {}).values())
+            del topic_split[-1]
+
+        return handlers
 
     def remove_topic_publish_handler(self, topic: str, handler_id: int) -> None:
         if self.get_topic_publish_handler(topic=topic, handler_id=handler_id) is not None:

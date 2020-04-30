@@ -68,7 +68,18 @@ class SubscriptionHandler:
         return self._topic_subscribe_handler_map.get(topic, {}).get(handler_id, None)
 
     def get_topic_subscribe_handlers(self, topic: str) -> List[Callable]:
-        return list(self._topic_subscribe_handler_map.get(topic, {}).values())
+        handlers = []
+
+        handlers.extend(self._topic_subscribe_handler_map.get(topic, {}).values())
+
+        topic_split = topic.split("/")
+
+        while topic_split:
+            topic_split[-1] = "#"
+            handlers.extend(self._topic_subscribe_handler_map.get("/".join(topic_split), {}).values())
+            del topic_split[-1]
+
+        return handlers
 
     def remove_topic_subscribe_handler(self, topic: str, handler_id: int) -> None:
         if (
@@ -140,7 +151,18 @@ class SubscriptionHandler:
         return self._topic_unsubscribe_handler_map.get(topic, {}).get(handler_id, None)
 
     def get_topic_unsubscribe_handlers(self, topic: str) -> List[Callable]:
-        return list(self._topic_unsubscribe_handler_map.get(topic, {}).values())
+        handlers = []
+
+        handlers.extend(self._topic_unsubscribe_handler_map.get(topic, {}).values())
+
+        topic_split = topic.split("/")
+
+        while topic_split:
+            topic_split[-1] = "#"
+            handlers.extend(self._topic_unsubscribe_handler_map.get("/".join(topic_split), {}).values())
+            del topic_split[-1]
+
+        return handlers
 
     def remove_topic_unsubscribe_handler(self, topic: str, handler_id: int) -> None:
         if (
