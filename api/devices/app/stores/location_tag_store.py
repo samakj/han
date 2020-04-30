@@ -10,6 +10,8 @@ from stores.queries.location_tag_queries import (
     GET_LOCATION_TAG_QUERY_TEMPLATE,
     GET_LOCATION_TAGS_QUERY_TEMPLATE,
     UPDATE_LOCATION_TAG_QUERY,
+    BACKUP_LOCATION_TAGS,
+    LOAD_LOCATION_TAGS_FROM_BACKUP,
 )
 
 DEFAULT_FIELDS = {"location_tag_id", "name", "level"}
@@ -138,3 +140,11 @@ class LocationTagStore:
         ).fetchone()
 
         return db_response["location_tag_id"] if db_response else None
+
+    def backup_location_tags(self) -> bool:
+        self.db.execute(BACKUP_LOCATION_TAGS)
+        return True
+
+    def load_location_tags_from_backup(self) -> bool:
+        self.db.execute(LOAD_LOCATION_TAGS_FROM_BACKUP)
+        return True

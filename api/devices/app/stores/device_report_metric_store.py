@@ -10,6 +10,8 @@ from stores.queries.device_report_metric_queries import (
     GET_DEVICE_REPORT_METRIC_QUERY_TEMPLATE,
     GET_DEVICE_REPORT_METRICS_QUERY_TEMPLATE,
     UPDATE_DEVICE_REPORT_METRIC_QUERY,
+    BACKUP_DEVICE_REPORT_METRICS,
+    LOAD_DEVICE_REPORT_METRICS_FROM_BACKUP,
 )
 
 DEFAULT_FIELDS = {"device_report_metric_id", "device_id", "report_metric_id"}
@@ -121,3 +123,11 @@ class DeviceReportMetricStore:
         ).fetchone()
 
         return db_response["device_report_metric_id"] if db_response else None
+
+    def backup_device_report_metrics(self) -> bool:
+        self.db.execute(BACKUP_DEVICE_REPORT_METRICS)
+        return True
+
+    def load_device_report_metrics_from_backup(self) -> bool:
+        self.db.execute(LOAD_DEVICE_REPORT_METRICS_FROM_BACKUP)
+        return True

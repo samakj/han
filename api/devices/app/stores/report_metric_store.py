@@ -10,6 +10,8 @@ from stores.queries.report_metric_queries import (
     GET_REPORT_METRIC_QUERY_TEMPLATE,
     GET_REPORT_METRICS_QUERY_TEMPLATE,
     UPDATE_REPORT_METRIC_QUERY,
+    BACKUP_REPORT_METRICS,
+    LOAD_REPORT_METRICS_FROM_BACKUP,
 )
 
 DEFAULT_FIELDS = {"report_metric_id", "name", "abbreviation", "report_value_type", "unit"}
@@ -189,3 +191,11 @@ class ReportMetricStore:
         ).fetchone()
 
         return db_response["report_metric_id"] if db_response else None
+
+    def backup_report_metrics(self) -> bool:
+        self.db.execute(BACKUP_REPORT_METRICS)
+        return True
+
+    def load_report_metrics_from_backup(self) -> bool:
+        self.db.execute(LOAD_REPORT_METRICS_FROM_BACKUP)
+        return True

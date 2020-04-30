@@ -10,6 +10,8 @@ from stores.queries.device_location_tag_queries import (
     GET_DEVICE_LOCATION_TAG_QUERY_TEMPLATE,
     GET_DEVICE_LOCATION_TAGS_QUERY_TEMPLATE,
     UPDATE_DEVICE_LOCATION_TAG_QUERY,
+    BACKUP_DEVICE_LOCATION_TAGS,
+    LOAD_DEVICE_LOCATION_TAGS_FROM_BACKUP,
 )
 
 DEFAULT_FIELDS = {"device_location_tag_id", "device_id", "location_tag_id"}
@@ -121,3 +123,11 @@ class DeviceLocationTagStore:
         ).fetchone()
 
         return db_response["device_location_tag_id"] if db_response else None
+
+    def backup_device_location_tags(self) -> bool:
+        self.db.execute(BACKUP_DEVICE_LOCATION_TAGS)
+        return True
+
+    def load_device_location_tags_from_backup(self) -> bool:
+        self.db.execute(LOAD_DEVICE_LOCATION_TAGS_FROM_BACKUP)
+        return True

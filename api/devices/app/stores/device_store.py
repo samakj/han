@@ -16,6 +16,8 @@ from stores.queries.device_queries import (
     GET_DEVICE_QUERY_TEMPLATE,
     GET_DEVICES_QUERY_TEMPLATE,
     UPDATE_DEVICE_QUERY,
+    BACKUP_DEVICES,
+    LOAD_DEVICES_FROM_BACKUP,
 )
 
 DEFAULT_FIELDS = {"device_id"}
@@ -161,3 +163,11 @@ class DeviceStore:
         ).fetchone()
 
         return db_response["device_id"] if db_response else None
+
+    def backup_devices(self) -> bool:
+        self.db.execute(BACKUP_DEVICES)
+        return True
+
+    def load_devices_from_backup(self) -> bool:
+        self.db.execute(LOAD_DEVICES_FROM_BACKUP)
+        return True
