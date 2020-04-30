@@ -15,4 +15,9 @@ REPORT_TOPIC_BLUEPRINT = TopicBlueprint()
 @REPORT_TOPIC_BLUEPRINT.topic("/report/#", actions=["message"])
 @decode(key=SECRET_KEY)
 def handle_report(message: MQTTMessage, **_) -> None:
-    LOG.info(f"{message.payload['_id']}'s reported to '{message.topic}': {message.payload}.")
+    node_id = message.payload.get('_id', None)
+
+    if node_id is None:
+        LOG.error(f"Meta requested with invalid request meta: \n{message.payload}")
+
+    LOG.info(f"{message.payload['_id']} reported to '{message.topic}'.")
