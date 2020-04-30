@@ -14,7 +14,7 @@ from stores.queries.location_tag_queries import (
     LOAD_LOCATION_TAGS_FROM_BACKUP,
 )
 
-DEFAULT_FIELDS = {"location_tag_id", "name", "level"}
+ALL_FIELDS = {"location_tag_id", "name", "level"}
 
 
 class LocationTagStore:
@@ -40,7 +40,7 @@ class LocationTagStore:
         fields: Optional[List[str]] = None,
     ) -> Optional[LocationTag]:
         db_response = self.db.execute(
-            text(GET_LOCATION_TAG_QUERY_TEMPLATE.format(fields=fields or DEFAULT_FIELDS)),
+            text(GET_LOCATION_TAG_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
             location_tag_id=location_tag_id,
         ).fetchone()
 
@@ -54,7 +54,7 @@ class LocationTagStore:
         db_response = self.db.execute(
             text(
                 GET_LOCATION_TAG_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_condition="name = :name",
                 )
             ),
@@ -69,22 +69,22 @@ class LocationTagStore:
         location_tag_id: Optional[Union[Set[int]], int] = None,
         name: Optional[Union[Set[str]], str] = None,
         level: Optional[Union[Set[int]], int] = None,
-        order_by: str = "location_tag_id",
-        order_by_direction: str = "ASC"
+        order_by: Optional[str] = None,
+        order_by_direction: Optional[str] = None,
     ) -> List[LocationTag]:
         where_conditions: Set[str] = set()
 
-        if location_tag_id is not None:
+        if location_tag_id:
             where_conditions.add(
                 f"location_tag_id = "
                 f"{'ANY(:location_tag_id)' if isinstance(location_tag_id, set) else ':location_tag_id'}"
             )
-        if name is not None:
+        if name:
             where_conditions.add(
                 f"name = "
                 f"{'ANY(:name)' if isinstance(name, set) else ':name'}"
             )
-        if level is not None:
+        if level:
             where_conditions.add(
                 f"level = "
                 f"{'ANY(:level)' if isinstance(level, set) else ':level'}"
@@ -93,9 +93,12 @@ class LocationTagStore:
         db_response = self.db.execute(
             text(
                 GET_LOCATION_TAGS_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_conditions=" AND ".join(where_conditions),
-                    order_by_condition=f"{order_by} {order_by_direction}"
+                    order_by_condition=(
+                        f"{order_by if order_by in ALL_FIELDS else 'location_tag_id'} "
+                        f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
+                    )
                 ),
                 location_tag_id=location_tag_id,
                 name=name,

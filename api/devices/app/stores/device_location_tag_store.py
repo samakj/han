@@ -14,7 +14,7 @@ from stores.queries.device_location_tag_queries import (
     LOAD_DEVICE_LOCATION_TAGS_FROM_BACKUP,
 )
 
-DEFAULT_FIELDS = {"device_location_tag_id", "device_id", "location_tag_id"}
+ALL_FIELDS = {"device_location_tag_id", "device_id", "location_tag_id"}
 
 
 class DeviceLocationTagStore:
@@ -40,7 +40,7 @@ class DeviceLocationTagStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[DeviceLocationTag]:
         db_response = self.db.execute(
-            text(GET_DEVICE_LOCATION_TAG_QUERY_TEMPLATE.format(fields=fields or DEFAULT_FIELDS)),
+            text(GET_DEVICE_LOCATION_TAG_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
             device_location_tag_id=device_location_tag_id,
         ).fetchone()
 
@@ -52,22 +52,22 @@ class DeviceLocationTagStore:
         device_location_tag_id: Optional[Union[Set[int]], int] = None,
         device_id: Optional[Union[Set[str]], str] = None,
         location_tag_id: Optional[Union[Set[int]], int] = None,
-        order_by: str = "device_location_tag_id",
-        order_by_direction: str = "ASC"
+        order_by: Optional[str] = None,
+        order_by_direction: Optional[str] = None,
     ) -> List[DeviceLocationTag]:
         where_conditions: Set[str] = set()
 
-        if device_location_tag_id is not None:
+        if device_location_tag_id:
             where_conditions.add(
                 f"device_location_tag_id = "
                 f"{'ANY(:device_location_tag_id)' if isinstance(device_location_tag_id, set) else ':device_location_tag_id'}"
             )
-        if device_id is not None:
+        if device_id:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:device_id)' if isinstance(device_id, set) else ':device_id'}"
             )
-        if location_tag_id is not None:
+        if location_tag_id:
             where_conditions.add(
                 f"location_tag_id = "
                 f"{'ANY(:location_tag_id)' if isinstance(location_tag_id, set) else ':location_tag_id'}"
@@ -76,9 +76,12 @@ class DeviceLocationTagStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICE_LOCATION_TAGS_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_conditions=" AND ".join(where_conditions),
-                    order_by_condition=f"{order_by} {order_by_direction}"
+                    order_by_condition=(
+                        f"{order_by if order_by in ALL_FIELDS else 'device_location_tag_id'} "
+                        f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
+                    )
                 ),
                 device_location_tag_id=device_location_tag_id,
                 device_ids=device_id,

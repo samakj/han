@@ -14,7 +14,7 @@ from stores.queries.device_report_metric_queries import (
     LOAD_DEVICE_REPORT_METRICS_FROM_BACKUP,
 )
 
-DEFAULT_FIELDS = {"device_report_metric_id", "device_id", "report_metric_id"}
+ALL_FIELDS = {"device_report_metric_id", "device_id", "report_metric_id"}
 
 
 class DeviceReportMetricStore:
@@ -40,7 +40,7 @@ class DeviceReportMetricStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[DeviceReportMetric]:
         db_response = self.db.execute(
-            text(GET_DEVICE_REPORT_METRIC_QUERY_TEMPLATE.format(fields=fields or DEFAULT_FIELDS)),
+            text(GET_DEVICE_REPORT_METRIC_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
             device_report_metric_id=device_report_metric_id,
         ).fetchone()
 
@@ -52,22 +52,22 @@ class DeviceReportMetricStore:
         device_report_metric_id: Optional[Union[Set[int]], int] = None,
         device_id: Optional[Union[Set[str]], str] = None,
         report_metric_id: Optional[Union[Set[int]], int] = None,
-        order_by: str = "device_report_metric_id",
-        order_by_direction: str = "ASC"
+        order_by: Optional[str] = None,
+        order_by_direction: Optional[str] = None,
     ) -> List[DeviceReportMetric]:
         where_conditions: Set[str] = set()
 
-        if device_report_metric_id is not None:
+        if device_report_metric_id:
             where_conditions.add(
                 f"device_report_metric_id = "
                 f"{'ANY(:device_report_metric_id)' if isinstance(device_report_metric_id, set) else ':device_report_metric_id'}"
             )
-        if device_id is not None:
+        if device_id:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:device_id)' if isinstance(device_id, set) else ':device_id'}"
             )
-        if report_metric_id is not None:
+        if report_metric_id:
             where_conditions.add(
                 f"report_metric_id = "
                 f"{'ANY(:report_metric_id)' if isinstance(report_metric_id, set) else ':report_metric_id'}"
@@ -76,9 +76,12 @@ class DeviceReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICE_REPORT_METRICS_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_conditions=" AND ".join(where_conditions),
-                    order_by_condition=f"{order_by} {order_by_direction}"
+                    order_by_condition=(
+                        f"{order_by if order_by in ALL_FIELDS else 'device_report_metric_id'} "
+                        f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
+                    )
                 ),
                 device_report_metric_id=device_report_metric_id,
                 device_ids=device_id,

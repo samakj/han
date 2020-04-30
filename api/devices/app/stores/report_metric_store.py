@@ -14,7 +14,7 @@ from stores.queries.report_metric_queries import (
     LOAD_REPORT_METRICS_FROM_BACKUP,
 )
 
-DEFAULT_FIELDS = {"report_metric_id", "name", "abbreviation", "report_value_type", "unit"}
+ALL_FIELDS = {"report_metric_id", "name", "abbreviation", "report_value_type", "unit"}
 
 
 class ReportMetricStore:
@@ -50,7 +50,7 @@ class ReportMetricStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[ReportMetric]:
         db_response = self.db.execute(
-            text(GET_REPORT_METRIC_QUERY_TEMPLATE.format(fields=fields or DEFAULT_FIELDS)),
+            text(GET_REPORT_METRIC_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
             report_metric_id=report_metric_id,
         ).fetchone()
 
@@ -64,7 +64,7 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRIC_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_condition="name = :name",
                 )
             ),
@@ -81,7 +81,7 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRIC_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_condition="abbreviation = :abbreviation",
                 )
             ),
@@ -98,32 +98,32 @@ class ReportMetricStore:
         abbreviation: Optional[Set[Set], str] = None,
         report_value_type: Optional[List[str], str] = None,
         unit: Optional[Set[str], str] = None,
-        order_by: str = "report_metric_id",
-        order_by_direction: str = "ASC"
+        order_by: Optional[str] = None,
+        order_by_direction: Optional[str] = None,
     ) -> List[ReportMetric]:
         where_conditions: Set[str] = set()
 
-        if report_metric_id is not None:
+        if report_metric_id:
             where_conditions.add(
                 f"report_metric_id = "
                 f"{'ANY(:report_metric_id)' if isinstance(report_metric_id, set) else ':report_metric_id'}"
             )
-        if name is not None:
+        if name:
             where_conditions.add(
                 f"name = "
                 f"{'ANY(:name)' if isinstance(name, set) else ':name'}"
             )
-        if abbreviation is not None:
+        if abbreviation:
             where_conditions.add(
                 f"abbreviation = "
                 f"{'ANY(:abbreviation)' if isinstance(abbreviation, set) else ':abbreviation'}"
             )
-        if report_value_type is not None:
+        if report_value_type:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:report_value_type)' if isinstance(report_value_type, set) else ':level'}"
             )
-        if unit is not None:
+        if unit:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:unit)' if isinstance(unit, set) else ':level'}"
@@ -132,9 +132,12 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRICS_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_conditions=" AND ".join(where_conditions),
-                    order_by_condition=f"{order_by} {order_by_direction}"
+                    order_by_condition=(
+                        f"{order_by if order_by in ALL_FIELDS else 'device_location_tag_id'} "
+                        f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
+                    )
                 ),
                 report_metric_id=report_metric_id,
                 name=name,

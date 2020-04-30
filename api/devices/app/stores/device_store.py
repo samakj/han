@@ -20,7 +20,7 @@ from stores.queries.device_queries import (
     LOAD_DEVICES_FROM_BACKUP,
 )
 
-DEFAULT_FIELDS = {"device_id"}
+ALL_FIELDS = {"device_id"}
 
 
 class DeviceStore:
@@ -49,16 +49,16 @@ class DeviceStore:
             device_id=device_id,
         ).fetchone()
 
-        fields = DEFAULT_FIELDS
+        fields = ALL_FIELDS
 
-        if location_tag_ids is not None:
+        if location_tag_ids:
             fields.add("location_tags")
             for location_tag_id in location_tag_ids:
                 self.device_location_tag_store.create_device_location_tag(
                     device_id=db_response["device_id"],
                     location_tag_id=location_tag_id,
                 )
-        if report_metric_ids is not None:
+        if report_metric_ids:
             fields.add("report_metrics")
             for report_metric_id in report_metric_ids:
                 self.device_report_metric_store.create_device_report_metric(
@@ -74,7 +74,11 @@ class DeviceStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[Device]:
         db_response = self.db.execute(
-            text(GET_DEVICE_QUERY_TEMPLATE.format(fields=fields or DEFAULT_FIELDS)),
+            text(
+                GET_DEVICE_QUERY_TEMPLATE.format(
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                )
+            ),
             device_id=device_id,
         ).fetchone()
 
@@ -91,12 +95,12 @@ class DeviceStore:
         self,
         fields: Optional[Set[str]] = None,
         device_id: Optional[Union[Set[str]], str] = None,
-        order_by: str = "device_id",
-        order_by_direction: str = "ASC"
+        order_by: Optional[str] = None,
+        order_by_direction: Optional[str] = None,
     ) -> List[Device]:
         where_conditions: Set[str] = set()
 
-        if device_id is not None:
+        if device_id:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:device_id)' if isinstance(device_id, list) else ':device_id'}"
@@ -105,9 +109,12 @@ class DeviceStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICES_QUERY_TEMPLATE.format(
-                    fields=fields or DEFAULT_FIELDS,
+                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
                     where_conditions=" AND ".join(where_conditions),
-                    order_by_condition=f"{order_by} {order_by_direction}"
+                    order_by_condition=(
+                        f"{order_by if order_by in ALL_FIELDS else 'device_id'} "
+                        f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
+                    )
                 ),
                 device_id=device_id,
             ),
