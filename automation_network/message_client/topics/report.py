@@ -17,4 +17,4 @@ REPORT_TOPIC_BLUEPRINT = TopicBlueprint()
 @decode(key=SECRET_KEY)
 @confirm_timestamp()
 def handle_report(message: MQTTMessage, **_) -> None:
-    LOG.info(f"{message.payload['meta']['id']}'s reported to '{message.topic}'.")
+    LOG.info(f"{message.payload['_id']}'s reported to '{message.topic}': {message.payload}.")
