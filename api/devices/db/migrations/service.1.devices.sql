@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS devices
+(
+    device_id TEXT PRIMARY KEY
+);
