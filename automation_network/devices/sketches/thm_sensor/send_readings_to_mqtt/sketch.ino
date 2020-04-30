@@ -35,9 +35,9 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("");
-    Serial.println("************************************************");
-    Serial.println("* ~ Starting thm_sensor send readings sketch ~ *");
-    Serial.println("************************************************");
+    Serial.println("****************************************************************");
+    Serial.println("*    -~-    Starting thm_sensor send readings sketch    -~-    *");
+    Serial.println("****************************************************************");
     Serial.println("");
 
     connectToWifi();
@@ -55,6 +55,10 @@ void setup()
     pinMode(MOTION_SENSOR_PIN, INPUT);
 
 	dht.setup(DHT_SENSOR_PIN, DHTesp::DHT22);
+
+	printDivider();
+    Serial.println("Setup complete");
+    printDivider();
 }
 
 void loop()
@@ -79,12 +83,23 @@ void loop()
             fullReportTopic += "/";
             fullReportTopic += NODE_ID;
 
-            Serial.println(reportJsonString);
+            Serial.print("Report -> Temperature: ");
+            Serial.print(temperature);
+            Serial.print("c, Humidity: ");
+            Serial.print(humidity);
+            Serial.print("%, Motion: ");
+            Serial.println(motion ? "TRUE" : "FALSE");
+
             mqttClient.publish_P(fullReportTopic.c_str(), reportPayload.c_str(), false);
 
             lastMeasurementMillis = millis();
         }
     }
+}
+
+void printDivider ()
+{
+    Serial.println("________________________________________________________________");
 }
 
 String salt (int length)
@@ -103,6 +118,9 @@ String salt (int length)
 void connectToWifi()
 {
     if (WiFi.status() != WL_CONNECTED) {
+        int connectStart = millis();
+
+        printDivider();
         Serial.print("Connecting to ");
         Serial.print(WIFI_SSID);
 
@@ -114,12 +132,15 @@ void connectToWifi()
             Serial.print(".");
         }
 
-        Serial.println(" WiFi connected.");
+        Serial.println("");
+        Serial.print("WiFi connected after ");
+        Serial.print(millis() - connectStart);
+        Serial.println("ms.");
 
         Serial.print("IP Address:");
-        Serial.print(WiFi.localIP());
+        Serial.println(WiFi.localIP());
         WiFi.macAddress(mac);
-        Serial.print(" | MAC Address: ");
+        Serial.print("MAC Address: ");
         Serial.print(mac[5], HEX);
         Serial.print(":");
         Serial.print(mac[4], HEX);
@@ -137,6 +158,9 @@ void connectToWifi()
 void connectToMqtt()
 {
     if (!mqttClient.connected()) {
+        int connectStart = millis();
+
+        printDivider();
         Serial.print("Connecting to MQTT");
 
         mqttClient.setServer(MQTT_HOST, MQTT_PORT);
@@ -145,7 +169,10 @@ void connectToMqtt()
         while (!mqttClient.connected()) {
             Serial.print(".");
             if (mqttClient.connect(NODE_ID)) {
-                Serial.println(" MQTT connected.");
+                Serial.println("");
+                Serial.print("MQTT connected after ");
+                Serial.print(millis() - connectStart);
+                Serial.println("ms.");
             } else {
                 delay(250);
             }
