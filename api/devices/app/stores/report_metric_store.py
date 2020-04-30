@@ -4,6 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from models.report_metric_model import ReportMetric
+from models.report_value_type import ReportValueType
 from stores.queries.report_metric_queries import (
     CREATE_REPORT_METRIC_QUERY,
     DELETE_REPORT_METRIC_QUERY,
@@ -28,6 +29,9 @@ class ReportMetricStore:
         report_value_type: str,
         unit: Optional[str] = None,
     ) -> ReportMetric:
+        if report_value_type not in ReportValueType.ALL:
+            raise Exception
+
         db_response = self.db.execute(
             text(CREATE_REPORT_METRIC_QUERY),
             name=name,
@@ -157,6 +161,9 @@ class ReportMetricStore:
         report_value_type: Optional[str] = None,
         unit: Optional[str] = None,
     ) -> Optional[ReportMetric]:
+        if report_value_type is not None and report_value_type not in ReportValueType.ALL:
+            raise Exception
+
         set_conditions: Set[str] = set()
 
         if name:

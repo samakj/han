@@ -1,3 +1,9 @@
+CREATE TABLE IF NOT EXISTS integer_report_values
+(
+    float_report_value_id SERIAL PRIMARY KEY,
+    value                 DECIMAL(16, 8) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS float_report_values
 (
     float_report_value_id SERIAL PRIMARY KEY,
@@ -10,7 +16,7 @@ CREATE TABLE IF NOT EXISTS string_report_values
     value                  TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS bool_report_values
+CREATE TABLE IF NOT EXISTS boolean_report_values
 (
     bool_report_value_id SERIAL PRIMARY KEY,
     value                BOOLEAN NOT NULL
