@@ -89,7 +89,7 @@ class DeviceLocationTagStore:
                 ),
             ),
             device_location_tag_id=device_location_tag_id,
-            device_ids=device_id,
+            device_id=device_id,
             location_tag_ids=location_tag_id,
         )
 

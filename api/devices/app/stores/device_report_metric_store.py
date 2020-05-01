@@ -89,7 +89,7 @@ class DeviceReportMetricStore:
                 ),
             ),
             device_report_metric_id=device_report_metric_id,
-            device_ids=device_id,
+            device_id=device_id,
             report_metric_ids=report_metric_id,
         )
 

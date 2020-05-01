@@ -100,7 +100,7 @@ class LocationTagStore:
                     fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_conditions=" AND ".join(where_conditions) if where_conditions else "TRUE",
                     order_by_condition=(
-                        f"{order_by if order_by in ALL_FIELDS else 'location_tag_id'} "
+                        f"{order_by if order_by in ALL_FIELDS else 'level'} "
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
