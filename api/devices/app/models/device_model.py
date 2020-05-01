@@ -2,11 +2,12 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from models.location_tag_model import LocationTag
-from models.report_metric_model import ReportMetric
+from models.device_type_model import DeviceType
 
 
 @dataclass
 class Device:
-    device_id: Optional[int] = None
+    device_id: Optional[str] = None
+    device_type_id: Optional[int] = None
     location_tags: Optional[List[LocationTag]] = None
-    report_metrics: Optional[List[ReportMetric]] = None
+    device_type: Optional[DeviceType] = None

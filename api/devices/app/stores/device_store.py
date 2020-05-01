@@ -5,11 +5,9 @@ from sqlalchemy.engine import Engine
 
 from models.device_model import Device
 from models.location_tag_model import LocationTag
-from models.report_metric_model import ReportMetric
 from stores.device_location_tag_store import DeviceLocationTagStore
-from stores.device_report_metric_store import DeviceReportMetricStore
 from stores.location_tag_store import LocationTagStore
-from stores.report_metric_store import ReportMetricStore
+from stores.device_type_store import DeviceTypeStore
 from stores.queries.device_queries import (
     CREATE_DEVICE_QUERY,
     DELETE_DEVICE_QUERY,
@@ -20,7 +18,7 @@ from stores.queries.device_queries import (
     LOAD_DEVICES_FROM_BACKUP,
 )
 
-ALL_FIELDS = {"device_id"}
+ALL_FIELDS = {"device_id", "device_type_id"}
 
 
 class DeviceStore:
@@ -28,25 +26,24 @@ class DeviceStore:
         self,
         db: Engine,
         device_location_tag_store: DeviceLocationTagStore,
-        device_report_metric_store: DeviceReportMetricStore,
         location_tag_store: LocationTagStore,
-        report_metric_store: ReportMetricStore,
+        device_type_store: DeviceTypeStore,
     ):
         self.db = db
         self.device_location_tag_store = device_location_tag_store
-        self.device_report_metric_store = device_report_metric_store
         self.location_tag_store = location_tag_store
-        self.report_metric_store = report_metric_store
+        self.device_type_store = device_type_store
 
     def create_device(
         self,
         device_id: str,
+        device_type_id: int,
         location_tag_ids: Optional[Set[int]] = None,
-        report_metric_ids: Optional[Set[int]] = None,
     ) -> Device:
         db_response = self.db.execute(
             text(CREATE_DEVICE_QUERY),
             device_id=device_id,
+            device_type_id=device_type_id,
         ).fetchone()
 
         fields = ALL_FIELDS
@@ -57,13 +54,6 @@ class DeviceStore:
                 self.device_location_tag_store.create_device_location_tag(
                     device_id=db_response["device_id"],
                     location_tag_id=location_tag_id,
-                )
-        if report_metric_ids:
-            fields.add("report_metrics")
-            for report_metric_id in report_metric_ids:
-                self.device_report_metric_store.create_device_report_metric(
-                    device_id=db_response["device_id"],
-                    report_metric_id=report_metric_id,
                 )
 
         return self.get_device(device_id=db_response["device_id"], fields=fields)
@@ -84,10 +74,13 @@ class DeviceStore:
 
         device = Device(**dict(db_response)) if db_response else None
 
-        if fields and "location_tags" in fields:
+        if device and fields and "location_tags" in fields:
             device.location_tags = self.get_device_location_tags(device_id=device_id)
-        if fields and "report_metrics" in fields:
-            device.report_metrics = self.get_device_report_metrics(device_id=device_id)
+        if device and fields and "device_type" in fields:
+            device.device_type = self.device_type_store.get_device_type(
+                device.device_type_id,
+                fields={"device_type_id", "name", "report_metrics"},
+            )
 
         return device
 
@@ -95,6 +88,7 @@ class DeviceStore:
         self,
         fields: Optional[Set[str]] = None,
         device_id: Optional[Union[Set[str], str]] = None,
+        device_type_id: Optional[Union[Set[int], int]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[Device]:
@@ -104,6 +98,11 @@ class DeviceStore:
             where_conditions.add(
                 f"device_id = "
                 f"{'ANY(:device_id)' if isinstance(device_id, list) else ':device_id'}"
+            )
+        if device_type_id:
+            where_conditions.add(
+                f"device_type_id = "
+                f"{'ANY(:device_type_id)' if isinstance(device_type_id, list) else ':device_type_id'}"
             )
 
         db_response = self.db.execute(
@@ -125,9 +124,12 @@ class DeviceStore:
         for row in db_response:
             device = Device(**dict(row))
             if fields and "location_tags" in fields:
-                device.location_tags = self.get_device_location_tags(device_id=device_id)
-            if fields and "report_metrics" in fields:
-                device.report_metrics = self.get_device_report_metrics(device_id=device_id)
+                device.location_tags = self.get_device_location_tags(device_id=device.device_id)
+            if fields and "device_type" in fields:
+                device.device_type = self.device_type_store.get_device_type(
+                    device.device_type_id,
+                    fields={"device_type_id", "name", "report_metrics"},
+                )
             devices.append(device)
 
         return devices
@@ -139,18 +141,15 @@ class DeviceStore:
             location_tag_id={device_location_tag.location_tag_id for device_location_tag in device_location_tags}
         )
 
-    def get_device_report_metrics(self, device_id: str) -> List[ReportMetric]:
-        device_report_metrics = self.device_report_metric_store.get_device_report_metrics(device_id=device_id)
-
-        return self.report_metric_store.get_report_metrics(
-            report_metric_id={device_report_metric.report_metric_id for device_report_metric in device_report_metrics}
-        )
-
     def update_device(
         self,
         device_id: str,
+        device_type_id: Optional[int] = None,
     ) -> Optional[Device]:
         set_conditions: Set[str] = set()
+
+        if device_type_id:
+            set_conditions.add("device_type_id = :device_type_id")
 
         if not set_conditions:
             return self.get_device(device_id=device_id)
@@ -162,6 +161,7 @@ class DeviceStore:
 
         return Device(
             device_id=db_response["device_id"],
+            device_type_id=db_response["device_type_id"],
         ) if db_response else None
 
     def delete_device(self, device_id: str) -> Optional[int]:
