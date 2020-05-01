@@ -9,6 +9,8 @@ from stores.queries.report_metric_queries import (
     CREATE_REPORT_METRIC_QUERY,
     DELETE_REPORT_METRIC_QUERY,
     GET_REPORT_METRIC_QUERY_TEMPLATE,
+    GET_REPORT_METRIC_BY_NAME_QUERY_TEMPLATE,
+    GET_REPORT_METRIC_BY_ABBREVIATION_QUERY_TEMPLATE,
     GET_REPORT_METRICS_QUERY_TEMPLATE,
     UPDATE_REPORT_METRIC_QUERY,
     BACKUP_REPORT_METRICS,
@@ -71,9 +73,8 @@ class ReportMetricStore:
     ) -> Optional[ReportMetric]:
         db_response = self.db.execute(
             text(
-                GET_REPORT_METRIC_QUERY_TEMPLATE.format(
+                GET_REPORT_METRIC_BY_NAME_QUERY_TEMPLATE.format(
                     fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
-                    where_condition="name = :name",
                 )
             ),
             name=name,
@@ -88,7 +89,7 @@ class ReportMetricStore:
     ) -> Optional[ReportMetric]:
         db_response = self.db.execute(
             text(
-                GET_REPORT_METRIC_QUERY_TEMPLATE.format(
+                GET_REPORT_METRIC_BY_ABBREVIATION_QUERY_TEMPLATE.format(
                     fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_condition="abbreviation = :abbreviation",
                 )

@@ -12,6 +12,18 @@ SELECT {fields}
  WHERE report_metric_id = :report_metric_id 
 """
 
+GET_REPORT_METRIC_BY_NAME_QUERY_TEMPLATE = """
+SELECT {fields}
+  FROM report_metrics
+ WHERE name = :name 
+"""
+
+GET_REPORT_METRIC_BY_ABBREVIATION_QUERY_TEMPLATE = """
+SELECT {fields}
+  FROM report_metrics
+ WHERE abbreviation = :abbreviation 
+"""
+
 GET_REPORT_METRICS_QUERY_TEMPLATE = """
   SELECT {fields}
     FROM report_metrics

@@ -37,7 +37,7 @@ def get_report_metric_by_name(name: str) -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<string:abbreviation>/", methods=["GET"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/abbreviation/<string:abbreviation>/", methods=["GET"])
 def get_report_metric_by_abbreviation(abbreviation: str) -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.get_report_metric_by_abbreviation(

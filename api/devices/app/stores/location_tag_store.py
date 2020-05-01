@@ -8,6 +8,7 @@ from stores.queries.location_tag_queries import (
     CREATE_LOCATION_TAG_QUERY,
     DELETE_LOCATION_TAG_QUERY,
     GET_LOCATION_TAG_QUERY_TEMPLATE,
+    GET_LOCATION_TAG_BY_NAME_QUERY_TEMPLATE,
     GET_LOCATION_TAGS_QUERY_TEMPLATE,
     UPDATE_LOCATION_TAG_QUERY,
     BACKUP_LOCATION_TAGS,
@@ -57,9 +58,8 @@ class LocationTagStore:
     ) -> Optional[LocationTag]:
         db_response = self.db.execute(
             text(
-                GET_LOCATION_TAG_QUERY_TEMPLATE.format(
+                GET_LOCATION_TAG_BY_NAME_QUERY_TEMPLATE.format(
                     fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
-                    where_condition="name = :name",
                 )
             ),
             name=name,
