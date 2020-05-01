@@ -5,7 +5,7 @@ services:
     container_name: devices_app
     volumes:
       - ./app:/app
-      - ../../libs:/libs
+      - ../../libs/python:/libs
     environment:
       - DB_HOST=cms_db
       - DB_NAME=${DB_NAME}
