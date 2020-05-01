@@ -88,9 +88,9 @@ class DeviceLocationTagStore:
                     )
                 ),
             ),
-            device_location_tag_id=device_location_tag_id,
-            device_id=device_id,
-            location_tag_ids=location_tag_id,
+            device_location_tag_id=list(device_location_tag_id) if isinstance(device_location_tag_id, set) else device_location_tag_id,
+            device_id=list(device_id) if isinstance(device_id, set) else device_id,
+            location_tag_id=list(location_tag_id) if isinstance(location_tag_id, set) else location_tag_id,
         )
 
         return [DeviceLocationTag(**dict(row)) for row in db_response]

@@ -117,7 +117,7 @@ class DeviceStore:
                     )
                 ),
             ),
-            device_id=device_id,
+            device_id=list(device_id) if isinstance(device_id, list) else device_id,
         )
 
         devices = []

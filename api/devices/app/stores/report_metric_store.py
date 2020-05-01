@@ -149,10 +149,10 @@ class ReportMetricStore:
                     )
                 ),
             ),
-            report_metric_id=report_metric_id,
-            name=name,
-            abbreviation=abbreviation,
-            report_value_type=report_value_type,
+            report_metric_id=list(report_metric_id) if isinstance(report_metric_id, set) else report_metric_id,
+            name=list(name) if isinstance(name, set) else name,
+            abbreviation=list(abbreviation) if isinstance(abbreviation, set) else abbreviation,
+            report_value_type=list(report_value_type) if isinstance(report_value_type, set) else report_value_type,
             unit=unit,
         )
 

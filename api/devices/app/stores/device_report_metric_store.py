@@ -88,9 +88,9 @@ class DeviceReportMetricStore:
                     )
                 ),
             ),
-            device_report_metric_id=device_report_metric_id,
-            device_id=device_id,
-            report_metric_ids=report_metric_id,
+            device_report_metric_id=list(device_report_metric_id) if isinstance(device_report_metric_id, set) else device_report_metric_id,
+            device_id=list(device_id) if isinstance(device_id, set) else device_id,
+            report_metric_id=list(report_metric_id) if isinstance(report_metric_id, set) else report_metric_id,
         )
 
         return [DeviceReportMetric(**dict(row)) for row in db_response]

@@ -105,9 +105,9 @@ class LocationTagStore:
                     )
                 ),
             ),
-            location_tag_id=location_tag_id,
-            name=name,
-            level=level,
+            location_tag_id=list(location_tag_id) if isinstance(location_tag_id, set) else location_tag_id,
+            name=list(name) if isinstance(name, set) else name,
+            level=list(level) if isinstance(level, set) else level,
         )
 
         return [LocationTag(**dict(row)) for row in db_response]
