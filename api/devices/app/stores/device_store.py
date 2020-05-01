@@ -84,9 +84,9 @@ class DeviceStore:
 
         device = Device(**dict(db_response)) if db_response else None
 
-        if "location_tags" in fields:
+        if fields and "location_tags" in fields:
             device.location_tags = self.get_device_location_tags(device_id=device_id)
-        if "report_metrics" in fields:
+        if fields and "report_metrics" in fields:
             device.report_metrics = self.get_device_report_metrics(device_id=device_id)
 
         return device
@@ -124,9 +124,9 @@ class DeviceStore:
 
         for row in db_response:
             device = Device(**dict(row))
-            if "location_tags" in fields:
+            if fields and "location_tags" in fields:
                 device.location_tags = self.get_device_location_tags(device_id=device_id)
-            if "report_metrics" in fields:
+            if fields and "report_metrics" in fields:
                 device.report_metrics = self.get_device_report_metrics(device_id=device_id)
             devices.append(device)
 
