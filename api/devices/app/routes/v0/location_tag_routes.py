@@ -51,7 +51,14 @@ def get_location_tags() -> JSONResponse:
 
 @LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["PATCH"])
 def update_location_tag(location_tag_id: int) -> JSONResponse:
-    return JSONResponse({"location_tag": current_app.location_tag_store.update_location_tag(location_tag_id=location_tag_id)})
+    request_data = request.get_json()
+    return JSONResponse({
+        "location_tag": current_app.location_tag_store.update_location_tag(
+            location_tag_id=location_tag_id,
+            name=request_data.get("name", None),
+            level=request_data.get("level", None),
+        )
+    })
 
 
 @LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["DELETE"])

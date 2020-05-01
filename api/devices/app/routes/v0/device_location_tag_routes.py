@@ -41,7 +41,14 @@ def get_device_location_tags() -> JSONResponse:
 
 @DEVICE_LOCATION_TAGS_V0_BLUEPRINT.route("/device-location-tags/<int:device_location_tag_id>/", methods=["PATCH"])
 def update_device_location_tag(device_location_tag_id: int) -> JSONResponse:
-    return JSONResponse({"device_location_tag": current_app.device_location_tag_store.update_device_location_tag(device_location_tag_id=device_location_tag_id)})
+    request_data = request.get_json()
+    return JSONResponse({
+        "device_location_tag": current_app.device_location_tag_store.update_device_location_tag(
+            device_location_tag_id=device_location_tag_id,
+            device_id=request_data.get("device_id", None),
+            location_tag_id=request_data.get("location_tag_id", None),
+        )
+    })
 
 
 @DEVICE_LOCATION_TAGS_V0_BLUEPRINT.route("/device-location-tags/<int:device_location_tag_id>/", methods=["DELETE"])

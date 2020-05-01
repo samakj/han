@@ -65,7 +65,16 @@ def get_report_metrics() -> JSONResponse:
 
 @REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["PATCH"])
 def update_report_metric(report_metric_id: int) -> JSONResponse:
-    return JSONResponse({"report_metric": current_app.report_metric_store.update_report_metric(report_metric_id=report_metric_id)})
+    request_data = request.get_json()
+    return JSONResponse({
+        "report_metric": current_app.report_metric_store.update_report_metric(
+            report_metric_id=report_metric_id,
+            name=request_data("name", None),
+            abbreviation=request_data("abbreviation", None),
+            unit=request_data("unit", None),
+            report_value_type=request_data("report_value_type", None),
+        )
+    })
 
 
 @REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["DELETE"])

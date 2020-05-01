@@ -41,7 +41,14 @@ def get_device_report_metrics() -> JSONResponse:
 
 @DEVICE_REPORT_METRICS_V0_BLUEPRINT.route("/device-report-metrics/<int:device_report_metric_id>/", methods=["PATCH"])
 def update_device_report_metric(device_report_metric_id: int) -> JSONResponse:
-    return JSONResponse({"device_report_metric": current_app.device_report_metric_store.update_device_report_metric(device_report_metric_id=device_report_metric_id)})
+    request_data = request.get_json()
+    return JSONResponse({
+        "device_report_metric": current_app.device_report_metric_store.update_device_report_metric(
+            device_report_metric_id=device_report_metric_id,
+            device_id=request_data.get("device_id", None),
+            location_tag_id=request_data.get("location_tag_id", None),
+        )
+    })
 
 
 @DEVICE_REPORT_METRICS_V0_BLUEPRINT.route("/device-report-metrics/<int:device_report_metric_id>/", methods=["DELETE"])
