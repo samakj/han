@@ -156,7 +156,7 @@ class DeviceStore:
             return self.get_device(device_id=device_id)
 
         db_response = self.db.execute(
-            text(UPDATE_DEVICE_QUERY),
+            text(UPDATE_DEVICE_QUERY.format(set_conditions=", ".join(set_conditions))),
             device_id=device_id,
         ).fetchone()
 

@@ -112,7 +112,7 @@ class DeviceReportMetricStore:
             return self.get_device_report_metric(device_report_metric_id=device_report_metric_id)
 
         db_response = self.db.execute(
-            text(UPDATE_DEVICE_REPORT_METRIC_QUERY),
+            text(UPDATE_DEVICE_REPORT_METRIC_QUERY.format(set_conditions=", ".join(set_conditions))),
             device_report_metric_id=device_report_metric_id,
             device_id=device_id,
             report_metric_id=report_metric_id,

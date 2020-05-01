@@ -129,7 +129,7 @@ class LocationTagStore:
             return self.get_location_tag(location_tag_id=location_tag_id)
 
         db_response = self.db.execute(
-            text(UPDATE_LOCATION_TAG_QUERY),
+            text(UPDATE_LOCATION_TAG_QUERY.format(set_conditions=", ".join(set_conditions))),
             location_tag_id=location_tag_id,
             name=name,
             level=level,
