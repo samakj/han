@@ -69,10 +69,10 @@ def update_report_metric(report_metric_id: int) -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.update_report_metric(
             report_metric_id=report_metric_id,
-            name=request_data("name", None),
-            abbreviation=request_data("abbreviation", None),
-            unit=request_data("unit", None),
-            report_value_type=request_data("report_value_type", None),
+            name=request_data.get("name", None),
+            abbreviation=request_data.get("abbreviation", None),
+            unit=request_data.get("unit", None),
+            report_value_type=request_data.get("report_value_type", None),
         )
     })
 
