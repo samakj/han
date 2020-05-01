@@ -3,7 +3,7 @@ import os
 CREATE_LOCATION_TAG_QUERY = """
 INSERT INTO location_tags (name, level)
      VALUES (:name, :level)
-  RETURNING location_tag_id, name
+  RETURNING location_tag_id, name, level
 """
 
 GET_LOCATION_TAG_QUERY_TEMPLATE = """
