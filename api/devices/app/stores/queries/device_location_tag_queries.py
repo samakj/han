@@ -1,8 +1,8 @@
 import os
 
 CREATE_DEVICE_LOCATION_TAG_QUERY = """
-INSERT INTO device_location_tags (device_location_tag_id, device_id, location_tag_id)
-     VALUES (:device_location_tag_id, :device_id, :location_tag_id)
+INSERT INTO device_location_tags (device_id, location_tag_id)
+     VALUES (:device_id, :location_tag_id)
   RETURNING device_location_tag_id, device_id, location_tag_id
 """
 

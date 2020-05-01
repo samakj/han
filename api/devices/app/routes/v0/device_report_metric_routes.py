@@ -9,7 +9,6 @@ def create_device_report_metric() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "device_report_metric": current_app.device_report_metric_store.create_device_report_metric(
-            device_report_metric_id=request_data["device_report_metric_id"],
             device_id=request_data["device_id"],
             report_metric_id=request_data["report_metric_id"],
         )

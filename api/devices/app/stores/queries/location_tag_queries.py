@@ -1,8 +1,8 @@
 import os
 
 CREATE_LOCATION_TAG_QUERY = """
-INSERT INTO location_tags (location_tag_id, name, level)
-     VALUES (:location_tag_id, :name, :level)
+INSERT INTO location_tags (name, level)
+     VALUES (:name, :level)
   RETURNING location_tag_id, name
 """
 

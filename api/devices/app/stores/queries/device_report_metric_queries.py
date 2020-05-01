@@ -1,8 +1,8 @@
 import os
 
 CREATE_DEVICE_REPORT_METRIC_QUERY = """
-INSERT INTO device_report_metrics (device_report_metric_id, device_id, report_metric_id)
-     VALUES (:device_report_metric_id, :device_id, :report_metric_id)
+INSERT INTO device_report_metrics (device_id, report_metric_id)
+     VALUES (:device_id, :report_metric_id)
   RETURNING device_report_metric_id, device_id, report_metric_id
 """
 

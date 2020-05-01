@@ -9,7 +9,6 @@ def create_report_metric() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "report_metric": current_app.report_metric_store.create_report_metric(
-            report_metric_id=request_data["report_metric_id"],
             name=request_data["name"],
             abbreviation=request_data["abbreviation"],
             report_value_type=request_data["report_value_type"],

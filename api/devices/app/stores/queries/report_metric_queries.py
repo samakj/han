@@ -1,8 +1,8 @@
 import os
 
 CREATE_REPORT_METRIC_QUERY = """
-INSERT INTO report_metrics (report_metric_id, name, abbreviation, unit, report_value_type)
-     VALUES (:report_metric_id, :name, :abbreviation, :unit, :report_value_type)
+INSERT INTO report_metrics (name, abbreviation, unit, report_value_type)
+     VALUES (:name, :abbreviation, :unit, :report_value_type)
   RETURNING report_metric_id, name, abbreviation, unit, report_value_type
 """
 

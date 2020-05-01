@@ -9,7 +9,6 @@ def create_location_tag() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "location_tag": current_app.location_tag_store.create_location_tag(
-            location_tag_id=request_data["location_tag_id"],
             name=request_data["name"],
             level=request_data["level"],
         )

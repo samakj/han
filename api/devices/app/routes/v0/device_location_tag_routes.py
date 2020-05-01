@@ -9,7 +9,6 @@ def create_device_location_tag() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "device_location_tag": current_app.device_location_tag_store.create_device_location_tag(
-            device_location_tag_id=request_data["device_location_tag_id"],
             device_id=request_data["device_id"],
             location_tag_id=request_data["location_tag_id"],
         )
