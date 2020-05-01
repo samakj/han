@@ -76,7 +76,7 @@ class DeviceStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICE_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                 )
             ),
             device_id=device_id,
@@ -109,7 +109,7 @@ class DeviceStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICES_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_conditions=" AND ".join(where_conditions),
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'device_id'} "

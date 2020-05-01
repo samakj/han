@@ -40,7 +40,11 @@ class DeviceReportMetricStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[DeviceReportMetric]:
         db_response = self.db.execute(
-            text(GET_DEVICE_REPORT_METRIC_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
+            text(
+                GET_DEVICE_REPORT_METRIC_QUERY_TEMPLATE.format(
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
+                )
+            ),
             device_report_metric_id=device_report_metric_id,
         ).fetchone()
 
@@ -76,7 +80,7 @@ class DeviceReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICE_REPORT_METRICS_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_conditions=" AND ".join(where_conditions),
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'device_report_metric_id'} "

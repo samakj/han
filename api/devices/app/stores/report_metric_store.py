@@ -54,7 +54,11 @@ class ReportMetricStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[ReportMetric]:
         db_response = self.db.execute(
-            text(GET_REPORT_METRIC_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
+            text(
+                GET_REPORT_METRIC_QUERY_TEMPLATE.format(
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS)
+                )
+            ),
             report_metric_id=report_metric_id,
         ).fetchone()
 
@@ -68,7 +72,7 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRIC_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_condition="name = :name",
                 )
             ),
@@ -85,7 +89,7 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRIC_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_condition="abbreviation = :abbreviation",
                 )
             ),
@@ -136,7 +140,7 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(
                 GET_REPORT_METRICS_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_conditions=" AND ".join(where_conditions),
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'device_location_tag_id'} "

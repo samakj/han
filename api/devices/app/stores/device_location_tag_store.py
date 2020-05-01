@@ -40,7 +40,11 @@ class DeviceLocationTagStore:
         fields: Optional[Set[str]] = None,
     ) -> Optional[DeviceLocationTag]:
         db_response = self.db.execute(
-            text(GET_DEVICE_LOCATION_TAG_QUERY_TEMPLATE.format(fields=(fields or ALL_FIELDS) & ALL_FIELDS)),
+            text(
+                GET_DEVICE_LOCATION_TAG_QUERY_TEMPLATE.format(
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS)
+                )
+            ),
             device_location_tag_id=device_location_tag_id,
         ).fetchone()
 
@@ -76,7 +80,7 @@ class DeviceLocationTagStore:
         db_response = self.db.execute(
             text(
                 GET_DEVICE_LOCATION_TAGS_QUERY_TEMPLATE.format(
-                    fields=(fields or ALL_FIELDS) & ALL_FIELDS,
+                    fields=", ".join((fields or ALL_FIELDS) & ALL_FIELDS),
                     where_conditions=" AND ".join(where_conditions),
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'device_location_tag_id'} "
