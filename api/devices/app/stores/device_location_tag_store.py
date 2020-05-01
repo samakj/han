@@ -127,9 +127,9 @@ class DeviceLocationTagStore:
         db_response = self.db.execute(
             text(DELETE_DEVICE_LOCATION_TAG_QUERY),
             device_location_tag_id=device_location_tag_id,
-        ).fetchone()
+        ).scalar()
 
-        return db_response["device_location_tag_id"] if db_response else None
+        return db_response
 
     def backup_device_location_tags(self) -> bool:
         self.db.execute(BACKUP_DEVICE_LOCATION_TAGS)

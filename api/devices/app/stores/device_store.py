@@ -167,9 +167,9 @@ class DeviceStore:
         db_response = self.db.execute(
             text(DELETE_DEVICE_QUERY),
             device_id=device_id,
-        ).fetchone()
+        ).scalar()
 
-        return db_response["device_id"] if db_response else None
+        return db_response
 
     def backup_devices(self) -> bool:
         self.db.execute(BACKUP_DEVICES)

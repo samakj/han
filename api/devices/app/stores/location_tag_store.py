@@ -144,9 +144,9 @@ class LocationTagStore:
         db_response = self.db.execute(
             text(DELETE_LOCATION_TAG_QUERY),
             location_tag_id=location_tag_id,
-        ).fetchone()
+        ).scalar()
 
-        return db_response["location_tag_id"] if db_response else None
+        return db_response
 
     def backup_location_tags(self) -> bool:
         self.db.execute(BACKUP_LOCATION_TAGS)

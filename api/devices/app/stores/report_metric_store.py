@@ -202,9 +202,9 @@ class ReportMetricStore:
         db_response = self.db.execute(
             text(DELETE_REPORT_METRIC_QUERY),
             report_metric_id=report_metric_id,
-        ).fetchone()
+        ).scalar()
 
-        return db_response["report_metric_id"] if db_response else None
+        return db_response
 
     def backup_report_metrics(self) -> bool:
         self.db.execute(BACKUP_REPORT_METRICS)
