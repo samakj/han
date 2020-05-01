@@ -7,7 +7,7 @@ services:
       - ./app:/app
       - ../../libs/python:/libs
     environment:
-      - DB_HOST=cms_db
+      - DB_HOST=devices_db
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
