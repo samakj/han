@@ -116,8 +116,8 @@ class DeviceStore:
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
-                device_id=device_id,
             ),
+            device_id=device_id,
         )
 
         devices = []

@@ -87,10 +87,10 @@ class DeviceLocationTagStore:
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
-                device_location_tag_id=device_location_tag_id,
-                device_ids=device_id,
-                location_tag_ids=location_tag_id,
             ),
+            device_location_tag_id=device_location_tag_id,
+            device_ids=device_id,
+            location_tag_ids=location_tag_id,
         )
 
         return [DeviceLocationTag(**dict(row)) for row in db_response]

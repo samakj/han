@@ -87,10 +87,10 @@ class DeviceReportMetricStore:
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
-                device_report_metric_id=device_report_metric_id,
-                device_ids=device_id,
-                report_metric_ids=report_metric_id,
             ),
+            device_report_metric_id=device_report_metric_id,
+            device_ids=device_id,
+            report_metric_ids=report_metric_id,
         )
 
         return [DeviceReportMetric(**dict(row)) for row in db_response]

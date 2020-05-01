@@ -104,10 +104,10 @@ class LocationTagStore:
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
-                location_tag_id=location_tag_id,
-                name=name,
-                level=level,
             ),
+            location_tag_id=location_tag_id,
+            name=name,
+            level=level,
         )
 
         return [LocationTag(**dict(row)) for row in db_response]

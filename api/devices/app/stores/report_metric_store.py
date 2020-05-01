@@ -147,12 +147,12 @@ class ReportMetricStore:
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
                     )
                 ),
-                report_metric_id=report_metric_id,
-                name=name,
-                abbreviation=abbreviation,
-                report_value_type=report_value_type,
-                unit=unit,
             ),
+            report_metric_id=report_metric_id,
+            name=name,
+            abbreviation=abbreviation,
+            report_value_type=report_value_type,
+            unit=unit,
         )
 
         return [ReportMetric(**dict(row)) for row in db_response]
