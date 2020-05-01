@@ -4,7 +4,7 @@ from han_flask.responses import JSONResponse
 REPORT_METRICS_V0_BLUEPRINT = Blueprint(name="v0_report_metrics", import_name=__name__)
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/", methods=["POST"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/", methods=["POST"])
 def create_report_metric() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
@@ -18,7 +18,7 @@ def create_report_metric() -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/<int:report_metric_id>/", methods=["GET"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["GET"])
 def get_report_metric(report_metric_id: int) -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.get_report_metric(
@@ -28,7 +28,7 @@ def get_report_metric(report_metric_id: int) -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/<string:name>/", methods=["GET"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<string:name>/", methods=["GET"])
 def get_report_metric_by_name(name: str) -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.get_report_metric_by_name(
@@ -38,7 +38,7 @@ def get_report_metric_by_name(name: str) -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/<string:abbreviation>/", methods=["GET"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<string:abbreviation>/", methods=["GET"])
 def get_report_metric_by_abbreviation(abbreviation: str) -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.get_report_metric_by_abbreviation(
@@ -48,7 +48,7 @@ def get_report_metric_by_abbreviation(abbreviation: str) -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/", methods=["GET"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/", methods=["GET"])
 def get_report_metrics() -> JSONResponse:
     return JSONResponse({
         "report_metric": current_app.report_metric_store.get_report_metrics(
@@ -64,21 +64,21 @@ def get_report_metrics() -> JSONResponse:
     })
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/<int:report_metric_id>/", methods=["PATCH"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["PATCH"])
 def update_report_metric(report_metric_id: int) -> JSONResponse:
     return JSONResponse({"report_metric": current_app.report_metric_store.update_report_metric(report_metric_id=report_metric_id)})
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/<int:report_metric_id>/", methods=["DELETE"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["DELETE"])
 def delete_report_metric(report_metric_id: int) -> JSONResponse:
     return JSONResponse({"report_metric": current_app.report_metric_store.delete_report_metric(report_metric_id=report_metric_id)})
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/backup/", methods=["POST"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/backup/", methods=["POST"])
 def backup_report_metrics() -> JSONResponse:
     return JSONResponse({"success": current_app.report_metric_store.backup_report_metrics()})
 
 
-@REPORT_METRICS_V0_BLUEPRINT.route("/report_metrics/load/", methods=["POST"])
+@REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/load/", methods=["POST"])
 def load_report_metrics() -> JSONResponse:
     return JSONResponse({"success": current_app.report_metric_store.load_report_metrics_from_backup()})

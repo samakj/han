@@ -4,7 +4,7 @@ from han_flask.responses import JSONResponse
 LOCATION_TAGS_V0_BLUEPRINT = Blueprint(name="v0_location_tags", import_name=__name__)
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/", methods=["POST"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/", methods=["POST"])
 def create_location_tag() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
@@ -16,7 +16,7 @@ def create_location_tag() -> JSONResponse:
     })
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/<int:location_tag_id>/", methods=["GET"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["GET"])
 def get_location_tag(location_tag_id: int) -> JSONResponse:
     return JSONResponse({
         "location_tag": current_app.location_tag_store.get_location_tag(
@@ -26,7 +26,7 @@ def get_location_tag(location_tag_id: int) -> JSONResponse:
     })
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/<string:name>/", methods=["GET"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<string:name>/", methods=["GET"])
 def get_location_tag_by_name(name: str) -> JSONResponse:
     return JSONResponse({
         "location_tag": current_app.location_tag_store.get_location_tag_by_name(
@@ -36,7 +36,7 @@ def get_location_tag_by_name(name: str) -> JSONResponse:
     })
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/", methods=["GET"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/", methods=["GET"])
 def get_location_tags() -> JSONResponse:
     return JSONResponse({
         "location_tag": current_app.location_tag_store.get_location_tags(
@@ -50,21 +50,21 @@ def get_location_tags() -> JSONResponse:
     })
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/<int:location_tag_id>/", methods=["PATCH"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["PATCH"])
 def update_location_tag(location_tag_id: int) -> JSONResponse:
     return JSONResponse({"location_tag": current_app.location_tag_store.update_location_tag(location_tag_id=location_tag_id)})
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/<int:location_tag_id>/", methods=["DELETE"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["DELETE"])
 def delete_location_tag(location_tag_id: int) -> JSONResponse:
     return JSONResponse({"location_tag": current_app.location_tag_store.delete_location_tag(location_tag_id=location_tag_id)})
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/backup/", methods=["POST"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/backup/", methods=["POST"])
 def backup_location_tags() -> JSONResponse:
     return JSONResponse({"success": current_app.location_tag_store.backup_location_tags()})
 
 
-@LOCATION_TAGS_V0_BLUEPRINT.route("/location_tags/load/", methods=["POST"])
+@LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/load/", methods=["POST"])
 def load_location_tags() -> JSONResponse:
     return JSONResponse({"success": current_app.location_tag_store.load_location_tags_from_backup()})
