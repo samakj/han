@@ -130,6 +130,7 @@ class LocationTagStore:
 
         db_response = self.db.execute(
             text(UPDATE_LOCATION_TAG_QUERY),
+            location_tag_id=location_tag_id,
             name=name,
             level=level,
         ).fetchone()

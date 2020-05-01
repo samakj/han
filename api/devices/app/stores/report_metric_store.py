@@ -185,6 +185,7 @@ class ReportMetricStore:
 
         db_response = self.db.execute(
             text(UPDATE_REPORT_METRIC_QUERY),
+            report_metric_id=report_metric_id,
             name=name,
             abbreviation=abbreviation,
             report_value_type=report_value_type,

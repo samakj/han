@@ -157,6 +157,7 @@ class DeviceStore:
 
         db_response = self.db.execute(
             text(UPDATE_DEVICE_QUERY),
+            device_id=device_id,
         ).fetchone()
 
         return Device(

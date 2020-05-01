@@ -113,6 +113,7 @@ class DeviceLocationTagStore:
 
         db_response = self.db.execute(
             text(UPDATE_DEVICE_LOCATION_TAG_QUERY),
+            device_location_tag_id=device_location_tag_id,
             device_id=device_id,
             location_tag_id=location_tag_id,
         ).fetchone()

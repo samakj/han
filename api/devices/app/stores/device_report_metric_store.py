@@ -113,6 +113,7 @@ class DeviceReportMetricStore:
 
         db_response = self.db.execute(
             text(UPDATE_DEVICE_REPORT_METRIC_QUERY),
+            device_report_metric_id=device_report_metric_id,
             device_id=device_id,
             report_metric_id=report_metric_id,
         ).fetchone()
