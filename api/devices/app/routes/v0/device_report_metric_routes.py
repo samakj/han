@@ -46,7 +46,7 @@ def update_device_report_metric(device_report_metric_id: int) -> JSONResponse:
         "device_report_metric": current_app.device_report_metric_store.update_device_report_metric(
             device_report_metric_id=device_report_metric_id,
             device_id=request_data.get("device_id", None),
-            location_tag_id=request_data.get("location_tag_id", None),
+            report_metric_id=request_data.get("report_metric_id", None),
         )
     })
 
