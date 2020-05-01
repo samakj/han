@@ -29,7 +29,7 @@ def get_device_report_metric(device_report_metric_id: int) -> JSONResponse:
 @DEVICE_REPORT_METRICS_V0_BLUEPRINT.route("/device-report-metrics/", methods=["GET"])
 def get_device_report_metrics() -> JSONResponse:
     return JSONResponse({
-        "device_report_metric": current_app.device_report_metric_store.get_device_report_metrics(
+        "device_report_metrics": current_app.device_report_metric_store.get_device_report_metrics(
             fields=set(request.args.getlist("fields")),
             device_report_metric_id=set(request.args.getlist("device_report_metric_id")),
             device_id=set(request.args.getlist("device_id")),
@@ -47,7 +47,7 @@ def update_device_report_metric(device_report_metric_id: int) -> JSONResponse:
 
 @DEVICE_REPORT_METRICS_V0_BLUEPRINT.route("/device-report-metrics/<int:device_report_metric_id>/", methods=["DELETE"])
 def delete_device_report_metric(device_report_metric_id: int) -> JSONResponse:
-    return JSONResponse({"device_report_metric": current_app.device_report_metric_store.delete_device_report_metric(device_report_metric_id=device_report_metric_id)})
+    return JSONResponse({"device_report_metric_id": current_app.device_report_metric_store.delete_device_report_metric(device_report_metric_id=device_report_metric_id)})
 
 
 @DEVICE_REPORT_METRICS_V0_BLUEPRINT.route("/device-report-metrics/backup/", methods=["POST"])

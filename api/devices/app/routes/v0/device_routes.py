@@ -35,7 +35,7 @@ def get_device(device_id: str) -> JSONResponse:
 @DEVICES_V0_BLUEPRINT.route("/devices/", methods=["GET"])
 def get_devices() -> JSONResponse:
     return JSONResponse({
-        "device": current_app.device_store.get_devices(
+        "devices": current_app.device_store.get_devices(
             fields=set(request.args.getlist("fields")),
             device_id=set(request.args.getlist("device_id")),
             order_by=request.args.get("order_by", None),
@@ -51,7 +51,7 @@ def update_device(device_id: str) -> JSONResponse:
 
 @DEVICES_V0_BLUEPRINT.route("/devices/<string:device_id>/", methods=["DELETE"])
 def delete_device(device_id: str) -> JSONResponse:
-    return JSONResponse({"device": current_app.device_store.delete_device(device_id=device_id)})
+    return JSONResponse({"device_id": current_app.device_store.delete_device(device_id=device_id)})
 
 
 @DEVICES_V0_BLUEPRINT.route("/devices/backup/", methods=["POST"])

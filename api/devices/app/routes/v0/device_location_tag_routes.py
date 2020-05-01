@@ -29,7 +29,7 @@ def get_device_location_tag(device_location_tag_id: int) -> JSONResponse:
 @DEVICE_LOCATION_TAGS_V0_BLUEPRINT.route("/device-location-tags/", methods=["GET"])
 def get_device_location_tags() -> JSONResponse:
     return JSONResponse({
-        "device_location_tag": current_app.device_location_tag_store.get_device_location_tags(
+        "device_location_tags": current_app.device_location_tag_store.get_device_location_tags(
             fields=set(request.args.getlist("fields")),
             device_location_tag_id=set(request.args.getlist("device_location_tag_id")),
             device_id=set(request.args.getlist("device_id")),
@@ -47,7 +47,7 @@ def update_device_location_tag(device_location_tag_id: int) -> JSONResponse:
 
 @DEVICE_LOCATION_TAGS_V0_BLUEPRINT.route("/device-location-tags/<int:device_location_tag_id>/", methods=["DELETE"])
 def delete_device_location_tag(device_location_tag_id: int) -> JSONResponse:
-    return JSONResponse({"device_location_tag": current_app.device_location_tag_store.delete_device_location_tag(device_location_tag_id=device_location_tag_id)})
+    return JSONResponse({"device_location_tag_id": current_app.device_location_tag_store.delete_device_location_tag(device_location_tag_id=device_location_tag_id)})
 
 
 @DEVICE_LOCATION_TAGS_V0_BLUEPRINT.route("/device-location-tags/backup/", methods=["POST"])

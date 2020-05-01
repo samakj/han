@@ -51,7 +51,7 @@ def get_report_metric_by_abbreviation(abbreviation: str) -> JSONResponse:
 @REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/", methods=["GET"])
 def get_report_metrics() -> JSONResponse:
     return JSONResponse({
-        "report_metric": current_app.report_metric_store.get_report_metrics(
+        "report_metrics": current_app.report_metric_store.get_report_metrics(
             fields=set(request.args.getlist("fields")),
             report_metric_id=set(request.args.getlist("report_metric_id")),
             name=set(request.args.getlist("name")),
@@ -71,7 +71,7 @@ def update_report_metric(report_metric_id: int) -> JSONResponse:
 
 @REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/<int:report_metric_id>/", methods=["DELETE"])
 def delete_report_metric(report_metric_id: int) -> JSONResponse:
-    return JSONResponse({"report_metric": current_app.report_metric_store.delete_report_metric(report_metric_id=report_metric_id)})
+    return JSONResponse({"report_metric_id": current_app.report_metric_store.delete_report_metric(report_metric_id=report_metric_id)})
 
 
 @REPORT_METRICS_V0_BLUEPRINT.route("/report-metrics/backup/", methods=["POST"])

@@ -39,7 +39,7 @@ def get_location_tag_by_name(name: str) -> JSONResponse:
 @LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/", methods=["GET"])
 def get_location_tags() -> JSONResponse:
     return JSONResponse({
-        "location_tag": current_app.location_tag_store.get_location_tags(
+        "location_tags": current_app.location_tag_store.get_location_tags(
             fields=set(request.args.getlist("fields")),
             location_tag_id=set(request.args.getlist("location_tag_id")),
             name=set(request.args.getlist("name")),
@@ -57,7 +57,7 @@ def update_location_tag(location_tag_id: int) -> JSONResponse:
 
 @LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/<int:location_tag_id>/", methods=["DELETE"])
 def delete_location_tag(location_tag_id: int) -> JSONResponse:
-    return JSONResponse({"location_tag": current_app.location_tag_store.delete_location_tag(location_tag_id=location_tag_id)})
+    return JSONResponse({"location_tag_id": current_app.location_tag_store.delete_location_tag(location_tag_id=location_tag_id)})
 
 
 @LOCATION_TAGS_V0_BLUEPRINT.route("/location-tags/backup/", methods=["POST"])
