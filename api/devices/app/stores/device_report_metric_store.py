@@ -49,9 +49,9 @@ class DeviceReportMetricStore:
     def get_device_report_metrics(
         self,
         fields: Optional[Set[str]] = None,
-        device_report_metric_id: Optional[Union[Set[int]], int] = None,
-        device_id: Optional[Union[Set[str]], str] = None,
-        report_metric_id: Optional[Union[Set[int]], int] = None,
+        device_report_metric_id: Optional[Union[Set[int], int]] = None,
+        device_id: Optional[Union[Set[str], str]] = None,
+        report_metric_id: Optional[Union[Set[int], int]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[DeviceReportMetric]:

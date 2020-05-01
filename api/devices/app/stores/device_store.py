@@ -94,7 +94,7 @@ class DeviceStore:
     def get_devices(
         self,
         fields: Optional[Set[str]] = None,
-        device_id: Optional[Union[Set[str]], str] = None,
+        device_id: Optional[Union[Set[str], str]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[Device]:

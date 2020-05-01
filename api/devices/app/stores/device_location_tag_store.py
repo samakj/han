@@ -49,9 +49,9 @@ class DeviceLocationTagStore:
     def get_device_location_tags(
         self,
         fields: Optional[Set[str]] = None,
-        device_location_tag_id: Optional[Union[Set[int]], int] = None,
-        device_id: Optional[Union[Set[str]], str] = None,
-        location_tag_id: Optional[Union[Set[int]], int] = None,
+        device_location_tag_id: Optional[Union[Set[int], int]] = None,
+        device_id: Optional[Union[Set[str], str]] = None,
+        location_tag_id: Optional[Union[Set[int], int]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[DeviceLocationTag]:

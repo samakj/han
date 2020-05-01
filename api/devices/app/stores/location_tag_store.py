@@ -66,9 +66,9 @@ class LocationTagStore:
     def get_location_tags(
         self,
         fields: Optional[Set[str]] = None,
-        location_tag_id: Optional[Union[Set[int]], int] = None,
-        name: Optional[Union[Set[str]], str] = None,
-        level: Optional[Union[Set[int]], int] = None,
+        location_tag_id: Optional[Union[Set[int], int]] = None,
+        name: Optional[Union[Set[str], str]] = None,
+        level: Optional[Union[Set[int], int]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[LocationTag]:

@@ -97,11 +97,11 @@ class ReportMetricStore:
     def get_report_metrics(
         self,
         fields: Optional[Set[str]] = None,
-        report_metric_id: Optional[Union[Set[int]], int] = None,
-        name: Optional[Set[str], str] = None,
-        abbreviation: Optional[Set[Set], str] = None,
-        report_value_type: Optional[List[str], str] = None,
-        unit: Optional[Set[str], str] = None,
+        report_metric_id: Optional[Union[Set[int], int]] = None,
+        name: Optional[Union[Set[str], str]] = None,
+        abbreviation: Optional[Union[Set[Set], str]] = None,
+        report_value_type: Optional[Union[List[str], str]] = None,
+        unit: Optional[Union[Set[str], str]] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[ReportMetric]:
