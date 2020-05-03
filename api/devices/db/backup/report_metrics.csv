@@ -1,0 +1,4 @@
+report_metric_id,name,abbreviation,unit,report_value_type
+1,temperature,t,°c,float
+2,humidity,h,%,float
+3,motion,m,,boolean
