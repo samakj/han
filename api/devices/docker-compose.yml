@@ -17,7 +17,7 @@ services:
       - LANG=${LANG}
       - VIRTUAL_PORT=${SERVICE_PORT}
     ports:
-      - "127.0.0.1:${SERVICE_PORT}:${SERVICE_PORT}"
+      - "${API_HOST}:${SERVICE_PORT}:${SERVICE_PORT}"
     links:
       - devices_db
   devices_db:
