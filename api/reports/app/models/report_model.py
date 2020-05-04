@@ -1,0 +1,14 @@
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+from models.report_metric_model import ReportMetric
+
+
+@dataclass
+class Report:
+    report_id: Optional[int] = None
+    report_metric_id: Optional[int] = None
+    report_metric: Optional[ReportMetric] = None
+    reported_at: Optional[datetime] = None
+    device_id: Optional[str] = None
