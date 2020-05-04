@@ -1,8 +1,8 @@
 FROM han-postgres:latest
 
 COPY ./migrations/ /docker-entrypoint-initdb.d/
-COPY ./data /var/lib/postgresql/data
-COPY ./backup /backup
+COPY ${LOCAL_DATA_FOLDER} /var/lib/postgresql/data
+COPY ${LOCAL_BACKUP_FOLDER} /backup
 
 VOLUME /var/lib/postgresql/data
 VOLUME /backup
