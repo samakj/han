@@ -18,6 +18,7 @@ from stores.queries.humidity_value_queries import (
 )
 
 ALL_FIELDS = {"humidity_value_id", "report_id", "value"}
+DEFAULT_LIMIT = 1000
 
 
 class HumidityValueStore:
@@ -82,6 +83,7 @@ class HumidityValueStore:
         value_lte: Optional[Decimal] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
+        limit: Optional[int] = None,
     ) -> List[HumidityValue]:
         where_conditions: Set[str] = set()
 
@@ -108,7 +110,8 @@ class HumidityValueStore:
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'humidity_value_id'} "
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
-                    )
+                    ),
+                    limit=limit or DEFAULT_LIMIT
                 ),
             ),
             humidity_value_id=list(humidity_value_id) if isinstance(humidity_value_id, set) else humidity_value_id,

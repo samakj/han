@@ -17,6 +17,7 @@ from stores.queries.motion_value_queries import (
 )
 
 ALL_FIELDS = {"motion_value_id", "report_id", "value"}
+DEFAULT_LIMIT = 1000
 
 
 class MotionValueStore:
@@ -80,6 +81,7 @@ class MotionValueStore:
         value: Optional[Bool] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
+        limit: Optional[int] = None,
     ) -> List[MotionValue]:
         where_conditions: Set[str] = set()
 
@@ -104,7 +106,8 @@ class MotionValueStore:
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'motion_value_id'} "
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
-                    )
+                    ),
+                    limit=limit or DEFAULT_LIMIT
                 ),
             ),
             motion_value_id=list(motion_value_id) if isinstance(motion_value_id, set) else motion_value_id,

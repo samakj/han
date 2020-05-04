@@ -24,6 +24,7 @@ from stores.queries.report_queries import (
 )
 
 ALL_FIELDS = {"report_id", "report_metric_id", "reported_at", "device_id"}
+DEFAULT_LIMIT = 1000
 
 
 class ReportStore:
@@ -102,6 +103,7 @@ class ReportStore:
         reported_at_lte: Optional[datetime] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
+        limit: Optional[int] = None
     ) -> List[Report]:
         where_conditions: Set[str] = set()
 
@@ -133,7 +135,8 @@ class ReportStore:
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'reported_at'} "
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
-                    )
+                    ),
+                    limit=limit or DEFAULT_LIMIT
                 ),
             ),
             report_id=list(report_id) if isinstance(report_id, set) else report_id,

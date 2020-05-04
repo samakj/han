@@ -22,6 +22,7 @@ GET_MOTION_VALUES_QUERY_TEMPLATE = """
    SELECT {fields}
      FROM motion_values
  ORDER BY {order_by_condition}
+    LIMIT {limit}
 """
 
 UPDATE_MOTION_VALUE_QUERY = """

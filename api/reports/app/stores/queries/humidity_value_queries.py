@@ -22,6 +22,7 @@ GET_HUMIDITY_VALUES_QUERY_TEMPLATE = """
    SELECT {fields}
      FROM humidity_values
  ORDER BY {order_by_condition}
+    LIMIT {limit}
 """
 
 UPDATE_HUMIDITY_VALUE_QUERY = """

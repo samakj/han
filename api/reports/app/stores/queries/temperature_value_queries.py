@@ -22,6 +22,7 @@ GET_TEMPERATURE_VALUES_QUERY_TEMPLATE = """
    SELECT {fields}
      FROM temperature_values
  ORDER BY {order_by_condition}
+    LIMIT {limit}
 """
 
 UPDATE_TEMPERATURE_VALUE_QUERY = """

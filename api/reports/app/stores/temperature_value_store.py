@@ -18,6 +18,7 @@ from stores.queries.temperature_value_queries import (
 )
 
 ALL_FIELDS = {"temperature_value_id", "report_id", "value"}
+DEFAULT_LIMIT = 1000
 
 
 class TemperatureValueStore:
@@ -82,6 +83,7 @@ class TemperatureValueStore:
         value_lte: Optional[Decimal] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
+        limit: Optional[int] = None,
     ) -> List[TemperatureValue]:
         where_conditions: Set[str] = set()
 
@@ -108,7 +110,8 @@ class TemperatureValueStore:
                     order_by_condition=(
                         f"{order_by if order_by in ALL_FIELDS else 'temperature_value_id'} "
                         f"{order_by_direction if order_by_direction in {'ASC', 'DESC'} else 'ASC'}"
-                    )
+                    ),
+                    limit=limit or DEFAULT_LIMIT
                 ),
             ),
             temperature_value_id=list(temperature_value_id) if isinstance(temperature_value_id, set) else temperature_value_id,

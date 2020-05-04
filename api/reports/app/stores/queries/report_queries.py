@@ -17,6 +17,7 @@ GET_REPORTS_QUERY_TEMPLATE = """
     FROM reports
    WHERE {where_conditions}
 ORDER BY {order_by_condition}
+   LIMIT {limit}
 """
 
 UPDATE_REPORT_QUERY = """
