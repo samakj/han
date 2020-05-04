@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from decimal import Decimal
+from typing import Optional, Union
 
 from models.report_metric_model import ReportMetric
 
@@ -12,3 +13,4 @@ class Report:
     report_metric: Optional[ReportMetric] = None
     reported_at: Optional[datetime] = None
     device_id: Optional[str] = None
+    value: Optional[Union[bool, Decimal]] = None
