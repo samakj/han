@@ -1,4 +1,3 @@
-from bool import Bool
 from typing import List, Optional, Set, Union
 
 from sqlalchemy import text
