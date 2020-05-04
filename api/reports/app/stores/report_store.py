@@ -85,10 +85,10 @@ class ReportStore:
                 report = TemperatureReport(**asdict(report), value=value_row.value)
             if report.report_metric.name == "humidity":
                 value_row = self.humidity_value_store.get_humidity_value_by_report_id(report_id=report_id)
-                report = TemperatureReport(**asdict(report), value=value_row.value)
+                report = HumidityReport(**asdict(report), value=value_row.value)
             if report.report_metric.name == "motion":
                 value_row = self.motion_value_store.get_motion_value_by_report_id(report_id=report_id)
-                report = TemperatureReport(**asdict(report), value=value_row.value)
+                report = MotionReport(**asdict(report), value=value_row.value)
 
         return report
 
@@ -157,10 +157,10 @@ class ReportStore:
                     report = TemperatureReport(**asdict(report), value=value_row.value)
                 if report.report_metric.name == "humidity":
                     value_row = self.humidity_value_store.get_humidity_value_by_report_id(report_id=report_id)
-                    report = TemperatureReport(**asdict(report), value=value_row.value)
+                    report = HumidityReport(**asdict(report), value=value_row.value)
                 if report.report_metric.name == "motion":
                     value_row = self.motion_value_store.get_motion_value_by_report_id(report_id=report_id)
-                    report = TemperatureReport(**asdict(report), value=value_row.value)
+                    report = MotionReport(**asdict(report), value=value_row.value)
             reports.append(report)
 
         return reports
