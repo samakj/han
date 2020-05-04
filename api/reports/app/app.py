@@ -4,6 +4,7 @@ from flask_cors import CORS
 from han_flask import HanFlask
 from han_sqlalchemy import create_database
 
+from handlers.report_creation_handler import ReportCreationHandler
 from stores.report_metric_store import ReportMetricStore
 from stores.temperature_value_store import TemperatureValueStore
 from stores.humidity_value_store import HumidityValueStore
@@ -36,6 +37,14 @@ def create_app() -> HanFlask:
         temperature_value_store=app.temperature_value_store,
         humidity_value_store=app.humidity_value_store,
         motion_value_store=app.motion_value_store,
+    )
+
+    app.report_creation_handler = ReportCreationHandler(
+        report_metric_store=app.report_metric_store,
+        temperature_value_store=app.temperature_value_store,
+        humidity_value_store=app.humidity_value_store,
+        motion_value_store=app.motion_value_store,
+        report_store=app.report_store,
     )
 
     return app
