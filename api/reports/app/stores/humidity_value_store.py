@@ -5,7 +5,6 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from models.humidity_value_model import HumidityValue
-from models.report_value_type import ReportValueType
 from stores.queries.humidity_value_queries import (
     CREATE_HUMIDITY_VALUE_QUERY,
     DELETE_HUMIDITY_VALUE_QUERY,
@@ -127,11 +126,7 @@ class HumidityValueStore:
         humidity_value_id: int,
         report_id: Optional[int] = None,
         value: Optional[Decimal] = None,
-        report_value_type: Optional[str] = None,
     ) -> Optional[HumidityValue]:
-        if report_value_type is not None and report_value_type not in ReportValueType.ALL:
-            raise Exception
-
         set_conditions: Set[str] = set()
 
         if report_id:

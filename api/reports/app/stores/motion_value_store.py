@@ -4,7 +4,6 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from models.motion_value_model import MotionValue
-from models.report_value_type import ReportValueType
 from stores.queries.motion_value_queries import (
     CREATE_MOTION_VALUE_QUERY,
     DELETE_MOTION_VALUE_QUERY,
@@ -78,7 +77,7 @@ class MotionValueStore:
         fields: Optional[Set[str]] = None,
         motion_value_id: Optional[Union[Set[int], int]] = None,
         report_id: Optional[Union[Set[int], int]] = None,
-        value: Optional[Bool] = None,
+        value: Optional[bool] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
         limit: Optional[int] = None,
@@ -121,12 +120,8 @@ class MotionValueStore:
         self,
         motion_value_id: int,
         report_id: Optional[int] = None,
-        value: Optional[Bool] = None,
-        report_value_type: Optional[str] = None,
+        value: Optional[bool] = None,
     ) -> Optional[MotionValue]:
-        if report_value_type is not None and report_value_type not in ReportValueType.ALL:
-            raise Exception
-
         set_conditions: Set[str] = set()
 
         if report_id:
