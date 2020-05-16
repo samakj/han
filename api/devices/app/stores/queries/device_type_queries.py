@@ -1,9 +1,9 @@
 import os
 
 CREATE_DEVICE_TYPE_QUERY = """
-INSERT INTO device_types (name)
-     VALUES (:name)
-  RETURNING device_type_id, name
+INSERT INTO device_types (name, report_period)
+     VALUES (:name, :report_period)
+  RETURNING device_type_id, name, report_period
 """
 
 GET_DEVICE_TYPE_QUERY_TEMPLATE = """
@@ -29,7 +29,7 @@ UPDATE_DEVICE_TYPE_QUERY = """
    UPDATE device_types
       SET {set_conditions}
     WHERE device_type_id = :device_type_id
-RETURNING device_type_id, name 
+RETURNING device_type_id, name, report_period
 """
 
 DELETE_DEVICE_TYPE_QUERY = """

@@ -8,4 +8,5 @@ from models.report_metric_model import ReportMetric
 class DeviceType:
     device_type_id: Optional[int] = None
     name: Optional[str] = None
+    report_period: Optional[int] = None
     report_metrics: Optional[List[ReportMetric]] = None

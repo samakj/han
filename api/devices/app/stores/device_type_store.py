@@ -18,7 +18,7 @@ from stores.queries.device_type_queries import (
     LOAD_DEVICE_TYPES_FROM_BACKUP,
 )
 
-ALL_FIELDS = {"device_type_id", "name"}
+ALL_FIELDS = {"device_type_id", "name", "report_period"}
 
 
 class DeviceTypeStore:
@@ -27,15 +27,17 @@ class DeviceTypeStore:
         self.device_type_report_metric_store = device_type_report_metric_store
         self.report_metric_store = report_metric_store
 
-    def create_device_type(self, name: str) -> DeviceType:
+    def create_device_type(self, name: str, report_period: int) -> DeviceType:
         db_response = self.db.execute(
             text(CREATE_DEVICE_TYPE_QUERY),
             name=name,
+            report_period=report_period,
         ).fetchone()
 
         return DeviceType(
             device_type_id=db_response["device_type_id"],
             name=db_response["name"],
+            report_period=db_response["report_period"],
         )
 
     def get_device_type(

@@ -10,6 +10,7 @@ def create_device_type() -> JSONResponse:
     return JSONResponse({
         "device_type": current_app.device_type_store.create_device_type(
             name=request_data["name"],
+            report_period=request_data["report_period"],
         )
     })
 
