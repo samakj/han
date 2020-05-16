@@ -27,11 +27,10 @@ class DeviceTypeStore:
         self.device_type_report_metric_store = device_type_report_metric_store
         self.report_metric_store = report_metric_store
 
-    def create_device_type(self, device_id: str, location_tag_id: int) -> DeviceType:
+    def create_device_type(self, name: str) -> DeviceType:
         db_response = self.db.execute(
             text(CREATE_DEVICE_TYPE_QUERY),
-            device_id=device_id,
-            location_tag_id=location_tag_id,
+            name=name,
         ).fetchone()
 
         return DeviceType(
