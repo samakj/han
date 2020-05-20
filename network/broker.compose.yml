@@ -15,3 +15,23 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
+    links:
+      - backend
+  backend:
+    build: ./backend
+    container_name: backend
+    volumes:
+      - ./backend:/app
+      - ../libs/python:/libs
+    environment:
+      - DB_HOST=devices_db
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - FLASK_ENV=${FLASK_ENV}
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - VIRTUAL_PORT=${BACKEND_PORT}
+    ports:
+      - "${BACKEND_HOST}:${BACKEND_PORT}:${BACKEND_PORT}"
