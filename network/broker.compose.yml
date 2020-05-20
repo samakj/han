@@ -1,0 +1,17 @@
+version: "3"
+services:
+  broker:
+    build: broker
+    container_name: broker
+    volumes:
+      - ./broker/config:/mosquitto/config
+      - ./broker/data:/mosquitto/data
+      - ./broker/log:/mosquitto/log
+    environment:
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - VIRTUAL_PORT=${BROKER_PORT}
+      - BACKEND_HOST=${BACKEND_HOST}
+      - BACKEND_PORT=${BACKEND_PORT}
+    ports:
+      - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
