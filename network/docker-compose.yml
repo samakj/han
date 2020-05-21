@@ -11,7 +11,7 @@ services:
       - LC_ALL=${LANG}
       - LANG=${LANG}
       - VIRTUAL_PORT=${BROKER_PORT}
-      - BACKEND_HOST=${BACKEND_HOST}
+      - BACKEND_HOST=backend
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
@@ -24,7 +24,7 @@ services:
       - ./backend:/app
       - ../libs/python:/libs
     environment:
-      - DB_HOST=devices_db
+      - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
