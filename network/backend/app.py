@@ -6,6 +6,7 @@ from han_sqlalchemy import create_database
 
 from routes.v0.user_routes import USERS_V0_BLUEPRINT
 from stores.user_store import UserStore
+from stores.superuser_store import SuperuserStore
 
 
 def create_app() -> HanFlask:
@@ -22,6 +23,7 @@ def create_app() -> HanFlask:
     )
 
     app.user_store = UserStore(db=app.db)
+    app.superuser_store = SuperuserStore(db=app.db)
 
     app.register_blueprint(USERS_V0_BLUEPRINT, url_prefix="/v0")
 
