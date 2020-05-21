@@ -8,6 +8,7 @@ from routes.v0.user_routes import USERS_V0_BLUEPRINT
 from routes.v0.superuser_routes import SUPERUSERS_V0_BLUEPRINT
 from stores.user_store import UserStore
 from stores.superuser_store import SuperuserStore
+from stores.access_control_store import AccessControlStore
 
 
 def create_app() -> HanFlask:
@@ -25,6 +26,7 @@ def create_app() -> HanFlask:
 
     app.user_store = UserStore(db=app.db)
     app.superuser_store = SuperuserStore(db=app.db)
+    app.access_control_store = AccessControlStore(db=app.db)
 
     app.register_blueprint(USERS_V0_BLUEPRINT, url_prefix="/v0")
     app.register_blueprint(SUPERUSERS_V0_BLUEPRINT, url_prefix="/v0")
