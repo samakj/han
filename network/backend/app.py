@@ -4,7 +4,7 @@ from flask_cors import CORS
 from han_flask import HanFlask
 from han_sqlalchemy import create_database
 
-from routes.v0.user_routes import USER_V0_BLUEPRINT
+from routes.v0.user_routes import USERS_V0_BLUEPRINT
 from stores.user_store import UserStore
 
 
@@ -23,7 +23,7 @@ def create_app() -> HanFlask:
 
     app.user_store = UserStore(db=app.db)
 
-    app.register_blueprint(USER_V0_BLUEPRINT, url_prefix="/v0/auth")
+    app.register_blueprint(USERS_V0_BLUEPRINT, url_prefix="/v0")
 
     return app
 
