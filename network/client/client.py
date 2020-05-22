@@ -21,7 +21,9 @@ def create_mqtt_client() -> HanMqttClient:
             username="client",
             password=os.environ["CLIENT_PASSWORD"],
         ),
-        tls_cert="/app/tls/client/client.crt",
+        ca_cert="/app/tls/ca/ca.crt",
+        client_cert="/app/tls/client/client.crt",
+        client_key="/app/tls/client/client.key",
     )
 
     mqtt_client.enable_logger(LOG)

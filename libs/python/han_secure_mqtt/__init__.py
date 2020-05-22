@@ -1,5 +1,5 @@
 import logging
-from ssl import PROTOCOL_TLSv1_2
+import ssl
 from typing import Any, Callable, Dict, Optional, Union
 
 from paho.mqtt.client import Client as MQTTClient
@@ -22,10 +22,12 @@ class HanMqttClient(MQTTClient):
         host: str,
         port: int,
         user_data: HanMqttUserData,
-        tls_cert: str,
+        ca_cert: str,
+        client_cert: str,
+        client_key: str,
     ):
         super(HanMqttClient, self).__init__(client_id=client_id, userdata=user_data)
-        self.tls_set(tls_cert, tls_version=PROTOCOL_TLSv1_2)
+        self.tls_set(ca_certs=ca_cert, certfile=client_cert, keyfile=client_key)
         self.tls_insecure_set(True)
 
         self.user_data = user_data
