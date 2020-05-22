@@ -3,9 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from paho.mqtt.client import Client as MQTTClient
 from han_secure_mqtt.models.response_code import ResponseCode
-from han_secure_mqtt.models.reason_codes import ReasonCodesMap
 from han_secure_mqtt.models.error_codes import ErrorCodesMaps
-from han_secure_mqtt.models.user_data import HanMqttUserData
 
 LOG = logging.getLogger(__name__)
 
@@ -94,13 +92,12 @@ class SubscriptionHandler:
     def handle_subscribe(
         self,
         _: MQTTClient,
-        userdata: HanMqttUserData,
         mid: int,
         granted_qos: bool,
+        userdata: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, Any]] = None,
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
-        userdata = userdata or HanMqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_subscribe_handlers(topic=topic):
@@ -176,10 +173,9 @@ class SubscriptionHandler:
             del self._topic_unsubscribe_handler_map[topic][handler_id]
 
     def handle_unsubscribe(
-        self, _: MQTTClient, userdata: HanMqttUserData, mid: int
+        self, _: MQTTClient, mid: int, userdata: Optional[Dict[str, Any]] = None,
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
-        userdata = userdata or HanMqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_unsubscribe_handlers(topic=topic):

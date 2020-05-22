@@ -1,8 +1,7 @@
 import logging
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from paho.mqtt.client import Client as MQTTClient, MQTTMessage
-from han_secure_mqtt.models.user_data import HanMqttUserData
 
 
 LOG = logging.getLogger(__name__)
@@ -49,9 +48,8 @@ class MessageHandler:
             del self._topic_handler_map[topic][handler_id]
 
     def handle_message(
-        self, _: MQTTClient, userdata: HanMqttUserData, message: MQTTMessage
+        self, _: MQTTClient, message: MQTTMessage, userdata: Optional[Dict[str, Any]] = None,
     ) -> None:
-        userdata = userdata or HanMqttUserData()
         for handler in self.get_topic_message_handlers(topic=message.topic):
             try:
                 handler(client=self.client, user_data=userdata, message=message)

@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, List, Optional
 from han_secure_mqtt.models.response_code import ResponseCode
 from han_secure_mqtt.models.reason_codes import ReasonCodesMap
 from han_secure_mqtt.models.error_codes import ErrorCodesMaps
-from han_secure_mqtt.models.user_data import HanMqttUserData
 from paho.mqtt.client import Client as MQTTClient
 
 LOG = logging.getLogger(__name__)
@@ -43,12 +42,11 @@ class ConnectionHandler:
     def handle_connect(
         self,
         _: MQTTClient,
-        userdata: HanMqttUserData,
         flags: Dict[str, Any],
         rc: int,
+        userdata: Optional[Dict[str, Any]] = None,
         properties: Dict[str, Any] = None,
     ) -> None:
-        userdata = userdata or HanMqttUserData()
         for handler in self.get_connect_handlers():
             try:
                 handler(
@@ -86,11 +84,10 @@ class ConnectionHandler:
     def handle_disconnect(
         self,
         _: MQTTClient,
-        userdata: HanMqttUserData,
         rc: int,
+        userdata: Optional[Dict[str, Any]] = None,
         properties: Dict[str, Any] = None,
     ) -> None:
-        userdata = userdata or HanMqttUserData()
         for handler in self.get_disconnect_handlers():
             try:
                 handler(client=self.client, userdata=userdata, reason_code=ReasonCodesMap[rc], properties=properties)

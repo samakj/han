@@ -3,7 +3,6 @@ import logging
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from paho.mqtt.client import Client as MQTTClient
-from han_secure_mqtt.models.user_data import HanMqttUserData
 from han_secure_mqtt.models.message_info import HanMqttMessageInfo
 
 LOG = logging.getLogger(__name__)
@@ -70,10 +69,9 @@ class PublishHandler:
         return message_info
 
     def handle_publish(
-        self, _: MQTTClient, userdata: HanMqttUserData, mid: int
+        self, _: MQTTClient, mid: int, userdata: Optional[Dict[str, Any]] = None,
     ) -> None:
         topic = self._mid_topic_map.get(mid, None)
-        userdata = userdata or HanMqttUserData()
 
         if topic is not None:
             for handler in self.get_topic_publish_handlers(topic=topic):

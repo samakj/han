@@ -3,7 +3,7 @@ import os
 import re
 import uuid
 
-from han_secure_mqtt import HanMqttClient, HanMqttUserData
+from han_secure_mqtt import HanMqttClient
 
 from topics.report import REPORT_TOPIC_BLUEPRINT
 
@@ -13,14 +13,11 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 def create_mqtt_client() -> HanMqttClient:
     mqtt_client = HanMqttClient(
-        client_id="node_controller",
+        client_id=":".join(re.findall('..', '%012x' % uuid.getnode())),
         host=os.environ["BROKER_HOST"],
         port=int(os.environ["BROKER_PORT"]),
-        user_data=HanMqttUserData(
-            client_id=':'.join(re.findall('..', '%012x' % uuid.getnode())),
-            username="client",
-            password=os.environ["CLIENT_PASSWORD"],
-        ),
+        username="client",
+        password=os.environ["CLIENT_PASSWORD"],
         ca_cert="/app/tls/ca/ca.crt",
         client_cert="/app/tls/client/client.crt",
         client_key="/app/tls/client/client.key",

@@ -1,9 +1,7 @@
 import logging
-import ssl
 from typing import Any, Callable, Dict, Optional, Union
 
 from paho.mqtt.client import Client as MQTTClient
-from han_secure_mqtt.models.user_data import HanMqttUserData
 from han_secure_mqtt.models.message_info import HanMqttMessageInfo
 from han_secure_mqtt.handlers.connection_handler import ConnectionHandler
 from han_secure_mqtt.handlers.message_handler import MessageHandler
@@ -21,14 +19,17 @@ class HanMqttClient(MQTTClient):
         client_id: str,
         host: str,
         port: int,
-        user_data: HanMqttUserData,
+        username: str,
+        password: str,
         ca_cert: str,
         client_cert: str,
         client_key: str,
+        user_data: Optional[Dict[str, Any]] = None,
     ):
         super(HanMqttClient, self).__init__(client_id=client_id, userdata=user_data)
         self.tls_set(ca_certs=ca_cert, certfile=client_cert, keyfile=client_key)
         self.tls_insecure_set(True)
+        self.username_pw_set(username=username, password=password)
 
         self.user_data = user_data
         self.message_handler = MessageHandler(client=self)
