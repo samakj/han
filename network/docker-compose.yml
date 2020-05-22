@@ -37,6 +37,21 @@ services:
       - "${BACKEND_HOST}:${BACKEND_PORT}:${BACKEND_PORT}"
     links:
       - db
+  client:
+    build: client
+    container_name: client
+    volumes:
+      - ./client:/app
+      - ../libs/python:/libs
+    environment:
+      - BROKER_HOST=broker
+      - BROKER_PORT=${BROKER_PORT}
+      - CLIENT_PASSWORD=${CLIENT_PASSWORD}
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - PYTHONUNBUFFERED=1
+    links:
+      - broker
   db:
     build: ./db
     container_name: db

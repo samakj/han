@@ -1,6 +1,6 @@
-/broker/**/*.pem
-/broker/**/*.crt
-/broker/**/*.key
-/broker/**/*.srl
-/broker/**/*.csr
+/**/tls/**/*.pem
+/**/tls/**/*.crt
+/**/tls/**/*.key
+/**/tls/**/*.srl
+/**/tls/**/*.csr
 .env
