@@ -1,6 +1,7 @@
 import logging
 import os
-from uuid import getnode
+import re
+import uuid
 
 from han_secure_mqtt import HanMqttClient, HanMqttUserData
 
@@ -11,25 +12,16 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 def create_mqtt_client() -> HanMqttClient:
-    mac_address = hex(getnode())
-
     mqtt_client = HanMqttClient(
         client_id="node_controller",
         host=os.environ["BROKER_HOST"],
         port=int(os.environ["BROKER_PORT"]),
         user_data=HanMqttUserData(
-            client_id=(
-                f"{mac_address[2]}{mac_address[3]}:"
-                f"{mac_address[4]}{mac_address[5]}:"
-                f"{mac_address[6]}{mac_address[7]}:"
-                f"{mac_address[8]}{mac_address[9]}:"
-                f"{mac_address[10]}{mac_address[11]}:"
-                f"{mac_address[12]}{mac_address[13]}"
-            ),
+            client_id=':'.join(re.findall('..', '%012x' % uuid.getnode())),
             username="client",
             password=os.environ["CLIENT_PASSWORD"],
         ),
-        tls_cert="/app/tls/client.crt",
+        tls_cert="/app/tls/client/client.crt",
     )
 
     mqtt_client.enable_logger(LOG)
