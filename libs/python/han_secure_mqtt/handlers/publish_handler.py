@@ -56,12 +56,14 @@ class PublishHandler:
         payload: Optional[Union[Dict[str, Any], str, int]] = None,
         qos: int = 0,
         retain: bool = False,
+        properties: Optional[Dict[str, Any]] = None,
     ) -> HanMqttMessageInfo:
         message_info = super(type(self.client), self.client).publish(
             topic=topic,
             payload=json.dumps(payload) if isinstance(payload, dict) else payload,
             qos=qos,
-            retain=retain
+            retain=retain,
+            properties=properties,
         )
         self._mid_topic_map[message_info.mid] = topic
 
