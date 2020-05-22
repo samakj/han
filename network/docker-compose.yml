@@ -46,6 +46,8 @@ services:
     environment:
       - BROKER_HOST=broker
       - BROKER_PORT=${BROKER_PORT}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_USER=${CLIENT_USER}
       - CLIENT_PASSWORD=${CLIENT_PASSWORD}
       - LC_ALL=${LANG}
       - LANG=${LANG}
