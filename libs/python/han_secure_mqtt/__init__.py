@@ -9,6 +9,8 @@ from han_secure_mqtt.handlers.connection_handler import ConnectionHandler
 from han_secure_mqtt.handlers.message_handler import MessageHandler
 from han_secure_mqtt.handlers.publish_handler import PublishHandler
 from han_secure_mqtt.handlers.subscription_handler import SubscriptionHandler
+from han_secure_mqtt.topics.topic_blueprint import TopicBlueprint
+from han_secure_mqtt.topics.default_topics import DEFAULT_TOPIC_BLUEPRINT
 
 LOG = logging.getLogger(__name__)
 
@@ -43,6 +45,8 @@ class HanMqttClient(MQTTClient):
         self.on_unsubscribe = self.subscription_handler.handle_unsubscribe
         self.on_connect = self.connection_handler.handle_connect
         self.on_disconnect = self.connection_handler.handle_disconnect
+
+        self.add_topic_blueprint(DEFAULT_TOPIC_BLUEPRINT)
 
     def subscribe(
         self,
@@ -123,6 +127,19 @@ class HanMqttClient(MQTTClient):
 
     def remove_disconnect_handler(self, handler_id: int) -> None:
         return self.connection_handler.remove_disconnect_handler(handler_id=handler_id)
+
+    def add_topic_blueprint(self, blueprint: TopicBlueprint, topic_prefix: str = ""):
+        for topic in blueprint.topic_action_handlers:
+            for handler in blueprint.topic_action_handlers[topic].get("subscribe", []):
+                self.add_topic_subscribe_handler(topic=f"{topic_prefix}{topic}", handler=handler)
+            for handler in blueprint.topic_action_handlers[topic].get("unsubscribe", []):
+                self.add_topic_unsubscribe_handler(topic=f"{topic_prefix}{topic}", handler=handler)
+            for handler in blueprint.topic_action_handlers[topic].get("publish", []):
+                self.add_topic_publish_handler(topic=f"{topic_prefix}{topic}", handler=handler)
+            for handler in blueprint.topic_action_handlers[topic].get("message", []):
+                self.add_topic_message_handler(topic=f"{topic_prefix}{topic}", handler=handler)
+
+            self.subscribe(topic=f"{topic_prefix}{topic}")
 
     def run(self) -> None:
         LOG.info("Starting MQTT client.")
