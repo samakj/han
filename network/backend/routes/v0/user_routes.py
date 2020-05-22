@@ -14,9 +14,6 @@ def authorise_user() -> JSONResponse:
 
     user = current_app.user_store.get_user_by_username(username=request_data["username"])
 
-    LOG.error(request_data)
-    LOG.error(user)
-
     if not user:
         error = "User not found"
         LOG.error(error)
