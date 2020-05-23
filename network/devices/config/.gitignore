@@ -1,0 +1,4 @@
+# Ignore files with secrets in.
+
+mqtt.json
+wifi.json
