@@ -1,12 +1,15 @@
 import json
 from argparse import ArgumentParser
 from shutil import copyfile
-from os import listdir
+from os import listdir, system, path as path_lib
+
+TLS_CA_FOLDER = "/Users/samakj/repos/HAN/network/tls"
 
 
 def build(path: str) -> None:
     print(f"Building {path}...")
     build_dir = f"./builds/{path.strip('/')}"
+    node_id = path.strip('/').split('/')[-1]
 
     with open(f"{build_dir}/build.json") as file:
         build_config = json.load(file)
@@ -24,8 +27,41 @@ def build(path: str) -> None:
         if file not in {"sketch.ino", "config.json"}:
             copyfile(f"{sketch_dir}/{file}", f"{build_dir}/{file}")
 
+    if sketch_config.get("certs", False):
+        print(f"Creating cert files.")
+        if not path_lib.isfile(f"{build_dir}/certificates.h"):
+            # system(f"cd /Users/samakj/repos/HAN/network/tls && sh generate-client-keys.sh {node_id}")
+
+            # with open(f"{TLS_CA_FOLDER}/{node_id}.key") as file:
+            #     client_key = file.read().strip("\n").split("\n")
+            # with open(f"{TLS_CA_FOLDER}/{node_id}.crt") as file:
+            #     client_cert = file.read().strip("\n").split("\n")
+            with open(f"{TLS_CA_FOLDER}/ca.crt") as file:
+                ca_cert = file.read().strip("\n").split("\n")
+
+            print(f"Writing certs.h")
+            with open(f"{build_dir}/certificates.h", "w") as file:
+                # file.write(f'const char CLIENT_KEY[] PROGMEM =\n')
+                # for line in client_key:
+                #     file.write(f'"{line}\\n" \\\n')
+                # file.write(f';\n')
+                #
+                # file.write(f'const char CLIENT_CERT[] PROGMEM =\n')
+                # for line in client_cert:
+                #     file.write(f'"{line}\\n" \\\n')
+                # file.write(f';\n')
+
+                file.write(f'const char CA_CERT[] PROGMEM =\n')
+                for line in ca_cert:
+                    file.write(f'"{line}\\n" \\\n')
+                file.write(f';\n')
+
+            # system(f"cd /Users/samakj/repos/HAN/network/tls && rm {node_id}*")
+        else:
+            print("File exists so not recreating.")
+
     variables = {
-        "NODE_ID": build_config["node_id"],
+        "NODE_ID": node_id,
     }
 
     if sketch_config.get("configs", None) is not None:

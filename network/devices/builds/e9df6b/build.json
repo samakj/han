@@ -1,4 +1,4 @@
 {
-    "sketch": "thm_sensor",
+    "sketch": "thm_sensor/establish_tls_connection",
     "variables": {}
 }
