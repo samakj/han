@@ -5,7 +5,3 @@ venv/
 .idea/
 __pycache__/
 *.py[cod]
-
-# Built arduino files
-automation_network/devices/builds/**/*.ino
-automation_network/devices/builds/**/config.h

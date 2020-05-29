@@ -1,9 +1,0 @@
-{
-    "sketch": "thm_sensor/send_readings_to_mqtt",
-    "node_id": "000000",
-    "variables": {
-        "META_TOPIC": "/v0/meta",
-        "REPORT_TOPIC": "/v0/report",
-        "DEVICE_PATH": "/home/bedroom/thm"
-    }
-}

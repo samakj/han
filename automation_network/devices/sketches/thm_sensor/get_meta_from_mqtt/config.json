@@ -1,6 +1,0 @@
-{
-    "configs": [
-        "mqtt.json",
-        "wifi.json"
-    ]
-}
