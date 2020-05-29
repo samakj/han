@@ -1,0 +1,5 @@
+{
+    "NTP_SERVER": "uk.pool.ntp.org",
+    "TIMEZONE": 0,
+    "DST": 0
+}
