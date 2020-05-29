@@ -1,2 +1,4 @@
 paho-mqtt==1.5.0
 pyjwt==1.7.1
+
+git+git://github.com/samakj/midge

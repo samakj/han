@@ -1,2 +1,1 @@
-paho-mqtt
-pyjwt
+git+git://github.com/samakj/midge

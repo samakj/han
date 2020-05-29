@@ -1,16 +1,3 @@
-black
-fastjsonschema
-flake8
-flask
-flask-admin
-flask-caching
-flask-cors
+git+git://github.com/samakj/flagon
 gunicorn
-iso8601
-isort
-mypy
-pylint
-pytest
-redis
-requests
 sqlalchemy

@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, request
-from han_flask.responses import JSONResponse
+from flagon.responses import JSONResponse
 
 REPORT_METRICS_V0_BLUEPRINT = Blueprint(name="v0_report_metrics", import_name=__name__)
 

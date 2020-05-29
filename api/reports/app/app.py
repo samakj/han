@@ -1,7 +1,7 @@
 import os
 
 from flask_cors import CORS
-from han_flask import HanFlask
+from flagon import Flagon
 from han_sqlalchemy import create_database
 
 from handlers.report_creation_handler import ReportCreationHandler
@@ -17,8 +17,8 @@ from stores.motion_value_store import MotionValueStore
 from stores.report_store import ReportStore
 
 
-def create_app() -> HanFlask:
-    app = HanFlask(__name__)
+def create_app() -> Flagon:
+    app = Flagon(__name__)
 
     app.config['SECRET_KEY'] = 'notsosecret'
 

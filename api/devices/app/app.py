@@ -1,7 +1,7 @@
 import os
 
 from flask_cors import CORS
-from han_flask import HanFlask
+from flagon import Flagon
 from han_sqlalchemy import create_database
 
 from routes.v0.device_location_tag_routes import DEVICE_LOCATION_TAGS_V0_BLUEPRINT
@@ -18,8 +18,8 @@ from stores.location_tag_store import LocationTagStore
 from stores.report_metric_store import ReportMetricStore
 
 
-def create_app() -> HanFlask:
-    app = HanFlask(__name__)
+def create_app() -> Flagon:
+    app = Flagon(__name__)
 
     app.config['SECRET_KEY'] = 'notsosecret'
 

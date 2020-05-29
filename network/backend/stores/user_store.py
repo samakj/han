@@ -1,6 +1,6 @@
 from typing import List, Optional, Set, Union
 
-from han_flask.exceptions import APIError
+from flagon.exceptions import APIError
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 

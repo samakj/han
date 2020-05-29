@@ -1,7 +1,7 @@
 import logging
 import os
 
-from han_secure_mqtt import HanMqttClient
+from midge import MidgeMqttClient
 
 from topics.report import REPORT_TOPIC_BLUEPRINT
 
@@ -9,8 +9,8 @@ LOG = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
-def create_mqtt_client() -> HanMqttClient:
-    mqtt_client = HanMqttClient(
+def create_mqtt_client() -> MidgeMqttClient:
+    mqtt_client = MidgeMqttClient(
         client_id=os.environ["CLIENT_ID"],
         host=os.environ["BROKER_HOST"],
         port=int(os.environ["BROKER_PORT"]),

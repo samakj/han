@@ -49,3 +49,5 @@ Werkzeug==0.15.4
 wrapt==1.11.2
 WTForms==2.2.1
 zipp==0.6.0
+
+git+git://github.com/samakj/flagon

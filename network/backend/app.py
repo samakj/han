@@ -1,7 +1,7 @@
 import os
 
 from flask_cors import CORS
-from han_flask import HanFlask
+from flagon import Flagon
 from han_sqlalchemy import create_database
 
 from routes.v0.user_routes import USERS_V0_BLUEPRINT
@@ -12,8 +12,8 @@ from stores.superuser_store import SuperuserStore
 from stores.access_control_store import AccessControlStore
 
 
-def create_app() -> HanFlask:
-    app = HanFlask(__name__)
+def create_app() -> Flagon:
+    app = Flagon(__name__)
 
     app.cors = CORS(app)
 

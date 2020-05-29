@@ -1,8 +1,8 @@
 import logging
 from flask import Blueprint, current_app, request
 
-from han_flask.exceptions import APIError
-from han_flask.responses import JSONResponse
+from flagon.exceptions import APIError
+from flagon.responses import JSONResponse
 
 LOG = logging.getLogger(__name__)
 ACCESS_CONTROLS_V0_BLUEPRINT = Blueprint(name="v0_access_control", import_name=__name__)
