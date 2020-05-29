@@ -2,6 +2,7 @@ FROM python:3.7-alpine
 
 RUN apk add bash
 RUN apk add build-base
+RUN apk add git
 RUN apk add postgresql-dev
 
 RUN mkdir /app
