@@ -85,7 +85,7 @@ String MACAddressByteArrayToString(byte MACAddressByteArray[6])
     for (byte i = 0; i < 6; ++i)
     {
         char buf[3];
-        sprintf(buf, "%02X", MACAddressByteArray[i]);
+        sprintf(buf, "%02x", MACAddressByteArray[i]);
         s += buf;
         if (i < 5) s += ':';
     }

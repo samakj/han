@@ -13,12 +13,13 @@ def authorise_user() -> JSONResponse:
     request_data = request.get_json()
 
     user = current_app.user_store.get_user_by_username(username=request_data["username"])
+    mac_address = request_data["clientid"].lower() if request_data.get("clientid", None) is not None else None
 
     if not user:
         error = "User not found"
         LOG.error(error)
         raise APIError(404, "USER_NOT_FOUND", data={"Ok": False, "Error": error})
-    if user.mac_address != request_data.get("clientid"):
+    if mac_address != user.mac_address:
         error = "Invalid mac address for user"
         LOG.error(error)
         raise APIError(400, "BAD_REQUEST", data={"Ok": False, "Error": error})
@@ -45,7 +46,11 @@ def create_user() -> JSONResponse:
         "user": current_app.user_store.create_user(
             username=request_data["username"],
             password=request_data["password"],
-            mac_address=request_data.get("mac_address", None),
+            mac_address=(
+                request_data.get["clientid"].lower()
+                if request_data.get("clientid", None) is not None else
+                None
+            ),
         )
     })
 
@@ -87,7 +92,7 @@ def get_users() -> JSONResponse:
             fields=set(request.args.getlist("fields")),
             user_id=set(request.args.getlist("user_id")),
             username=set(request.args.getlist("username")),
-            mac_address=set(request.args.getlist("mac_address")),
+            mac_address=set(request.args.getlist("mac_address", lambda x: x.lower())),
             order_by=request.args.get("order_by", None),
             order_by_direction=request.args.get("order_by_direction", None),
         )
@@ -102,10 +107,18 @@ def update_user(user_id: int) -> JSONResponse:
             user_id=user_id,
             current_username=request_data.get["current_username"],
             current_password=request_data.get["current_password"],
-            current_mac_address=request_data.get("current_mac_address", None),
+            current_mac_address=(
+                request_data.get["current_mac_address"].lower()
+                if request_data.get("current_mac_address", None) is not None else
+                None
+            ),
             username=request_data.get("username", None),
             password=request_data.get("password", None),
-            mac_address=request_data.get("mac_address", None),
+            mac_address=(
+                request_data.get["mac_address"].lower()
+                if request_data.get("mac_address", None) is not None else
+                None
+            ),
         )
     })
 
