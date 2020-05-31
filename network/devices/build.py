@@ -1,18 +1,34 @@
 import json
+import random
 from argparse import ArgumentParser
 from shutil import copyfile
 from os import listdir, system, path as path_lib
 
 TLS_CA_FOLDER = "/Users/samakj/repos/HAN/network/tls"
+PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-"
+PASSWORD_LENGTH = 16
 
 
-def build(path: str) -> None:
+def generate_password(chars: str, length: int) -> str:
+    return "".join(random.choice(chars) for _ in range(length))
+
+
+def build(path: str, regenerate_password: bool = False) -> None:
     print(f"Building {path}...")
     build_dir = f"./builds/{path.strip('/')}"
     node_id = path.strip('/').split('/')[-1]
+    previous_config = {}
 
     with open(f"{build_dir}/build.json") as file:
         build_config = json.load(file)
+    with open(f"{build_dir}/config.h") as file:
+        for line in file.readlines():
+            key_value_pair = line.replace("#define ", "").strip(" ").strip("\n").split(" ")
+            if len(key_value_pair) == 2:
+                try:
+                    previous_config[key_value_pair[0]] = int(key_value_pair[1].strip('"'))
+                except ValueError:
+                    previous_config[key_value_pair[0]] = key_value_pair[1].strip('"')
 
     sketch_dir = f"./sketches/{build_config['sketch']}"
 
@@ -66,6 +82,13 @@ def build(path: str) -> None:
 
     if sketch_config.get("configs", None) is not None:
         for config_path in sketch_config["configs"]:
+            if "mqtt.json" in config_path:
+                print(previous_config)
+                variables["MQTT_PASSWORD"] = (
+                    generate_password(PASSWORD_CHARS, PASSWORD_LENGTH)
+                    if regenerate_password or previous_config.get("MQTT_PASSWORD", None) is None else
+                    previous_config["MQTT_PASSWORD"]
+                )
             with open(f"./config/{config_path.strip('/')}") as file:
                 print(f"Adding sketch config file: {config_path}")
                 variables.update(json.load(file))
@@ -94,6 +117,13 @@ if __name__ == "__main__":
         type=str,
     )
 
+    parser.add_argument(
+        "--regenerate_password",
+        help="Will generate new password if set.",
+        default=False,
+        type=str,
+    )
+
     args = parser.parse_args()
-    build(args.path)
+    build(args.path, args.regenerate_password)
 

@@ -132,7 +132,7 @@ void connectToMqtt()
         Serial.print(MQTT_PORT);
 
         mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-        mqttClient.connect(MACAddress.c_str(), (char*)NODE_ID, (char*)"test");
+        mqttClient.connect(MACAddress.c_str(), (char*)NODE_ID, (char*)MQTT_PASSWORD);
 
         int i = 0;
         while (!mqttClient.connected()) {
