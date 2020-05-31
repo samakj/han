@@ -1,7 +1,7 @@
 import logging
 
 from paho.mqtt.client import MQTTMessage
-from han_mqtt.topics.TopicBlueprint import TopicBlueprint
+from midge.topics.topic_blueprint import TopicBlueprint
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(message)s")
