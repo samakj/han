@@ -1,5 +1,6 @@
 {
-    "MQTT_JWT_KEY": "supersecretkey",
     "MQTT_HOST": "192.168.0.xx",
-    "MQTT_PORT": 1883
+    "MQTT_PORT": 1883,
+    "V0_REPORT_TOPIC_ROOT": "/v0/report/",
+    "V0_COMMAND_TOPIC_ROOT": "/v0/command/"
 }

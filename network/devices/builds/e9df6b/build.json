@@ -1,4 +1,7 @@
 {
-    "sketch": "thm_sensor/establish_tls_connection",
-    "variables": {}
+    "sketch": "thm_sensor/send_readings_via_tls",
+    "variables": {
+        "DHT_SENSOR_PIN": 12,
+        "MOTION_SENSOR_PIN": 13
+    }
 }
