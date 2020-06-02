@@ -1,0 +1,7 @@
+metric_id,name,abbreviation,unit,value_type
+1,temperature,t,°c,float
+2,humidity,h,%,float
+3,motion,m,,boolean
+4,colour,c,,colour
+5,state_bool,sb,,boolean
+6,state_8bit,s8,,integer
