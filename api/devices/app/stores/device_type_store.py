@@ -4,9 +4,9 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from models.device_type_model import DeviceType
-from models.report_metric_model import ReportMetric
-from stores.report_metric_store import ReportMetricStore
-from stores.device_type_report_metric_store import DeviceTypeReportMetricStore
+from models.metric_model import Metric
+from stores.metric_store import MetricStore
+from stores.device_type_metric_store import DeviceTypeMetricStore
 from stores.queries.device_type_queries import (
     CREATE_DEVICE_TYPE_QUERY,
     DELETE_DEVICE_TYPE_QUERY,
@@ -22,10 +22,10 @@ ALL_FIELDS = {"device_type_id", "name", "report_period"}
 
 
 class DeviceTypeStore:
-    def __init__(self, db: Engine, report_metric_store: ReportMetricStore, device_type_report_metric_store: DeviceTypeReportMetricStore):
+    def __init__(self, db: Engine, metric_store: MetricStore, device_type_metric_store: DeviceTypeMetricStore):
         self.db = db
-        self.device_type_report_metric_store = device_type_report_metric_store
-        self.report_metric_store = report_metric_store
+        self.device_type_metric_store = device_type_metric_store
+        self.metric_store = metric_store
 
     def create_device_type(self, name: str, report_period: int) -> DeviceType:
         db_response = self.db.execute(
@@ -56,8 +56,8 @@ class DeviceTypeStore:
 
         device_type = DeviceType(**dict(db_response)) if db_response else None
 
-        if device_type and fields and "report_metrics" in fields:
-            device_type.report_metrics = self.get_device_type_report_metrics(device_type_id=device_type.device_type_id)
+        if device_type and fields and "metrics" in fields:
+            device_type.metrics = self.get_device_type_metrics(device_type_id=device_type.device_type_id)
 
         return device_type
 
@@ -77,8 +77,8 @@ class DeviceTypeStore:
 
         device_type = DeviceType(**dict(db_response)) if db_response else None
 
-        if device_type and fields and "report_metrics" in fields:
-            device_type.report_metrics = self.get_device_type_report_metrics(device_type_id=device_type.device_type_id)
+        if device_type and fields and "metrics" in fields:
+            device_type.metrics = self.get_device_type_metrics(device_type_id=device_type.device_type_id)
 
         return device_type
 
@@ -123,16 +123,16 @@ class DeviceTypeStore:
         for row in db_response:
             device_type = DeviceType(**dict(row))
             if fields and "location_tags" in fields:
-                device_type.location_tags = self.get_device_type_report_metrics(device_type_id=device_type.device_type_id)
+                device_type.location_tags = self.get_device_type_metrics(device_type_id=device_type.device_type_id)
             device_types.append(device_type)
 
         return device_types
 
-    def get_device_type_report_metrics(self, device_type_id: int) -> List[ReportMetric]:
-        device_type_report_metrics = self.device_type_report_metric_store.get_device_type_report_metrics(device_type_id=device_type_id)
+    def get_device_type_metrics(self, device_type_id: int) -> List[Metric]:
+        device_type_metrics = self.device_type_metric_store.get_device_type_metrics(device_type_id=device_type_id)
 
-        return self.report_metric_store.get_report_metrics(
-            report_metric_id={device_type_report_metric.device_type_report_metric_id for device_type_report_metric in device_type_report_metrics}
+        return self.metric_store.get_metrics(
+            metric_id={device_type_metric.device_type_metric_id for device_type_metric in device_type_metrics}
         )
 
     def update_device_type(

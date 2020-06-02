@@ -79,7 +79,7 @@ class DeviceStore:
         if device and fields and "device_type" in fields:
             device.device_type = self.device_type_store.get_device_type(
                 device.device_type_id,
-                fields={"device_type_id", "name", "report_metrics"},
+                fields={"device_type_id", "name", "metrics"},
             )
 
         return device
@@ -128,7 +128,7 @@ class DeviceStore:
             if fields and "device_type" in fields:
                 device.device_type = self.device_type_store.get_device_type(
                     device.device_type_id,
-                    fields={"device_type_id", "name", "report_metrics"},
+                    fields={"device_type_id", "name", "metrics"},
                 )
             devices.append(device)
 

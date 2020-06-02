@@ -3,9 +3,9 @@ from typing import List, Optional, Set, Union
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from models.report_metric_model import ReportMetric
+from models.metric_model import ReportMetric
 from models.report_value_type import ReportValueType
-from stores.queries.report_metric_queries import (
+from stores.queries.metric_queries import (
     CREATE_REPORT_METRIC_QUERY,
     DELETE_REPORT_METRIC_QUERY,
     GET_REPORT_METRIC_QUERY_TEMPLATE,

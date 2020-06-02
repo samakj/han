@@ -9,7 +9,7 @@ import requests
 from models.temperature_report_model import TemperatureReport
 from models.humidity_report_model import HumidityReport
 from models.motion_report_model import MotionReport
-from stores.report_metric_store import ReportMetricStore
+from stores.metric_store import ReportMetricStore
 from stores.temperature_value_store import TemperatureValueStore
 from stores.humidity_value_store import HumidityValueStore
 from stores.motion_value_store import MotionValueStore

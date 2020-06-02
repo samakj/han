@@ -14,9 +14,9 @@ def create_device() -> JSONResponse:
                 set(request_data["location_tag_ids"])
                 if request_data.get("location_tag_ids", None) is not None else None
             ),
-            report_metric_ids=(
-                set(request_data["report_metric_ids"])
-                if request_data.get("report_metric_ids", None) is not None else None
+            metric_ids=(
+                set(request_data["metric_ids"])
+                if request_data.get("metric_ids", None) is not None else None
             ),
         )
     })

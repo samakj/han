@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, Union
 
-from models.report_metric_model import ReportMetric
+from models.metric_model import ReportMetric
 
 
 @dataclass
