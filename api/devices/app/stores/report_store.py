@@ -6,13 +6,6 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from models.report_model import Report
-from models.temperature_report_model import TemperatureReport
-from models.humidity_report_model import HumidityReport
-from models.motion_report_model import MotionReport
-from stores.metric_store import ReportMetricStore
-from stores.temperature_value_store import TemperatureValueStore
-from stores.humidity_value_store import HumidityValueStore
-from stores.motion_value_store import MotionValueStore
 from stores.queries.report_queries import (
     CREATE_REPORT_QUERY,
     DELETE_REPORT_QUERY,
@@ -22,8 +15,10 @@ from stores.queries.report_queries import (
     BACKUP_REPORTS,
     LOAD_REPORTS_FROM_BACKUP,
 )
+from stores.device_store import DeviceStore
+from stores.metric_store import MetricStore
 
-ALL_FIELDS = {"report_id", "report_metric_id", "reported_at", "device_id"}
+ALL_FIELDS = {"report_id", "reported_at", "device_id", "metric_id", "value"}
 DEFAULT_LIMIT = 1000
 
 
@@ -31,35 +26,34 @@ class ReportStore:
     def __init__(
         self,
         db: Engine,
-        report_metric_store: ReportMetricStore,
-        temperature_value_store: TemperatureValueStore,
-        humidity_value_store: HumidityValueStore,
-        motion_value_store: MotionValueStore,
+        device_store: DeviceStore,
+        metric_store: MetricStore,
     ):
         self.db = db
-        self.report_metric_store = report_metric_store
-        self.temperature_value_store = temperature_value_store
-        self.humidity_value_store = humidity_value_store
-        self.motion_value_store = motion_value_store
+        self.metric_store = metric_store
+        self.device_store = device_store
 
     def create_report(
         self,
-        report_metric_id: int,
-        reported_at: datetime,
-        device_id: str,
+        device_id: int,
+        metric_id: int,
+        value: str,
+        reported_at: Optional[datetime] = None,
     ) -> Report:
         db_response = self.db.execute(
             text(CREATE_REPORT_QUERY),
-            report_metric_id=report_metric_id,
-            reported_at=reported_at,
+            reported_at=reported_at or datetime.utcnow(),
             device_id=device_id,
+            metric_id=metric_id,
+            value=value
         ).fetchone()
 
         return Report(
             report_id=db_response["report_id"],
-            report_metric_id=db_response["report_metric_id"],
             reported_at=db_response["reported_at"],
             device_id=db_response["device_id"],
+            metric_id=db_response["metric_id"],
+            value=db_response["value"],
         )
 
     def get_report(
@@ -78,18 +72,10 @@ class ReportStore:
 
         report = Report(**dict(db_response)) if db_response else None
 
-        if report and fields and "report_metric" in fields:
-            report.report_metric = self.report_metric_store.get_report_metric(report_metric_id=report.report_metric_id)
-        if report and fields and "value" in fields:
-            if report.report_metric.name == "temperature":
-                value_row = self.temperature_value_store.get_temperature_value_by_report_id(report_id=report_id)
-                report = TemperatureReport(**asdict(report), value=value_row.value)
-            if report.report_metric.name == "humidity":
-                value_row = self.humidity_value_store.get_humidity_value_by_report_id(report_id=report_id)
-                report = HumidityReport(**asdict(report), value=value_row.value)
-            if report.report_metric.name == "motion":
-                value_row = self.motion_value_store.get_motion_value_by_report_id(report_id=report_id)
-                report = MotionReport(**asdict(report), value=value_row.value)
+        if report and fields and "metric" in fields:
+            report.metric = self.metric_store.get_metric(metric_id=report.metric_id)
+        if report and fields and "device" in fields:
+            report.metric = self.device_store.get_device(device_id=report.device_id)
 
         return report
 
@@ -97,7 +83,7 @@ class ReportStore:
         self,
         fields: Optional[Set[str]] = None,
         report_id: Optional[Union[Set[int], int]] = None,
-        report_metric_id: Optional[Union[Set[int], int]] = None,
+        metric_id: Optional[Union[Set[int], int]] = None,
         device_id: Optional[Union[Set[str], str]] = None,
         reported_at_gte: Optional[datetime] = None,
         reported_at_lte: Optional[datetime] = None,
@@ -112,10 +98,10 @@ class ReportStore:
                 f"report_id = "
                 f"{'ANY(:report_id)' if isinstance(report_id, set) else ':report_id'}"
             )
-        if report_metric_id:
+        if metric_id:
             where_conditions.add(
-                f"report_metric_id = "
-                f"{'ANY(:report_metric_id)' if isinstance(report_metric_id, set) else ':report_metric_id'}"
+                f"metric_id = "
+                f"{'ANY(:metric_id)' if isinstance(metric_id, set) else ':metric_id'}"
             )
         if device_id:
             where_conditions.add(
@@ -140,7 +126,7 @@ class ReportStore:
                 ),
             ),
             report_id=list(report_id) if isinstance(report_id, set) else report_id,
-            report_metric_id=list(report_metric_id) if isinstance(report_metric_id, set) else report_metric_id,
+            metric_id=list(metric_id) if isinstance(metric_id, set) else metric_id,
             device_id=list(device_id) if isinstance(device_id, set) else device_id,
             reported_at_gte=reported_at_gte,
             reported_at_lte=reported_at_lte,
@@ -150,39 +136,42 @@ class ReportStore:
 
         for row in db_response:
             report = Report(**dict(row))
-            if fields and "report_metric" in fields:
-                report.report_metric = self.report_metric_store.get_report_metric(
-                    report_metric_id=report.report_metric_id
-                )
-            if fields and "value" in fields:
-                if report.report_metric.name == "temperature":
-                    value_row = self.temperature_value_store.get_temperature_value_by_report_id(report_id=report_id)
-                    report = TemperatureReport(**asdict(report), value=value_row.value)
-                if report.report_metric.name == "humidity":
-                    value_row = self.humidity_value_store.get_humidity_value_by_report_id(report_id=report_id)
-                    report = HumidityReport(**asdict(report), value=value_row.value)
-                if report.report_metric.name == "motion":
-                    value_row = self.motion_value_store.get_motion_value_by_report_id(report_id=report_id)
-                    report = MotionReport(**asdict(report), value=value_row.value)
-            reports.append(report)
+            known_metrics = {}
+            known_devices = {}
+
+            if fields and "metric" in fields:
+                if known_metrics.get(report.metric_id, None) is None:
+                    known_metrics[report.metric_id] = self.metric_store.get_metric(
+                        metric_id=report.metric_id
+                    )
+                report.metric = known_metrics[report.metric_id]
+            if fields and "device" in fields:
+                if known_devices.get(report.device_id, None) is None:
+                    known_devices[report.device_id] = self.device_store.get_device(
+                        device_id=report.device_id
+                    )
+                report.device = known_devices[report.device_id]
 
         return reports
 
     def update_report(
         self,
         report_id: int,
-        report_metric_id: Optional[int] = None,
         reported_at: Optional[datetime] = None,
         device_id: Optional[str] = None,
+        metric_id: Optional[int] = None,
+        value: Optional[str] = None,
     ) -> Optional[Report]:
         set_conditions: Set[str] = set()
 
-        if report_metric_id:
-            set_conditions.add("report_metric_id = :report_metric_id")
         if reported_at:
             set_conditions.add("reported_at = :reported_at")
         if device_id:
             set_conditions.add("device_id = :device_id")
+        if metric_id:
+            set_conditions.add("metric_id = :metric_id")
+        if value:
+            set_conditions.add("value = :value")
 
         if not set_conditions:
             return self.get_report(report_id=report_id)
@@ -190,16 +179,18 @@ class ReportStore:
         db_response = self.db.execute(
             text(UPDATE_REPORT_QUERY.format(set_conditions=", ".join(set_conditions))),
             report_id=report_id,
-            report_metric_id=report_metric_id,
             reported_at=reported_at,
             device_id=device_id,
+            metric_id=metric_id,
+            value=value,
         ).fetchone()
 
         return Report(
             report_id=db_response["report_id"],
-            report_metric_id=db_response["report_metric_id"],
             reported_at=db_response["reported_at"],
             device_id=db_response["device_id"],
+            metric_id=db_response["metric_id"],
+            value=db_response["value"],
         ) if db_response else None
 
     def delete_report(self, report_id: int) -> Optional[int]:

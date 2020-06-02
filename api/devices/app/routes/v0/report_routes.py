@@ -9,12 +9,10 @@ def create_report() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "report": current_app.report_creation_handler.create_report(
-            device_id=request_data["device_id"],
-            value=request_data["value"],
             reported_at=request_data["reported_at"],
-            report_metric_id=request_data.get("report_metric_id", None),
-            report_metric_name=request_data.get("report_metric_name", None),
-            report_metric_abbreviation=request_data.get("report_metric_abbreviation", None),
+            device_id=request_data["device_id"],
+            metric_id=request_data["metric_id"],
+            value=request_data["value"],
         )
     })
 
@@ -35,7 +33,7 @@ def get_reports() -> JSONResponse:
         "reports": current_app.report_store.get_report(
             fields=set(request.args.getlist("fields")),
             report_id=set(request.args.getlist("report_id")),
-            report_metric_id=set(request.args.getlist("report_metric_id")),
+            metric_id=set(request.args.getlist("metric_id")),
             device_id=set(request.args.getlist("device_id")),
             reported_at_gte=request.args.get("reported_at_gte", None),
             reported_at_lte=request.args.get("reported_at_lte", None),
@@ -52,9 +50,10 @@ def update_report(report_id: int) -> JSONResponse:
     return JSONResponse({
         "report": current_app.report_creation_handler.update_report(
             report_id=report_id,
-            device_id=request_data.get("device_id", None),
             reported_at=request_data.get("reported_at", None),
-            report_metric_id=request_data.get("report_metric_id", None),
+            device_id=request_data.get("device_id", None),
+            metric_id=request_data.get("metric_id", None),
+            value=request_data.get("value", None),
         )
     })
 

@@ -1,9 +1,9 @@
 import os
 
 CREATE_REPORT_QUERY = """
-INSERT INTO reports (report_metric_id, reported_at, device_id)
-     VALUES (:report_metric_id, :reported_at, :device_id)
-  RETURNING report_id, report_metric_id, reported_at, device_id
+INSERT INTO reports (reported_at, device_id, metric_id, value)
+     VALUES (:reported_at, :device_id, :metric_id, :value)
+  RETURNING report_id, reported_at, device_id, metric_id, value
 """
 
 GET_REPORT_QUERY_TEMPLATE = """
@@ -24,7 +24,7 @@ UPDATE_REPORT_QUERY = """
    UPDATE reports
       SET {set_conditions}
     WHERE report_id = :report_id
-RETURNING report_id, report_metric_id, reported_at, device_id
+RETURNING report_id, reported_at, device_id, metric_id, value
 """
 
 DELETE_REPORT_QUERY = """
