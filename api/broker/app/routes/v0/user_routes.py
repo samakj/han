@@ -47,7 +47,7 @@ def create_user() -> JSONResponse:
             username=request_data["username"],
             password=request_data["password"],
             mac_address=(
-                request_data.get["clientid"].lower()
+                request_data["clientid"].lower()
                 if request_data.get("clientid", None) is not None else
                 None
             ),
@@ -105,17 +105,17 @@ def update_user(user_id: int) -> JSONResponse:
     return JSONResponse({
         "user": current_app.user_store.update_user(
             user_id=user_id,
-            current_username=request_data.get["current_username"],
-            current_password=request_data.get["current_password"],
+            current_username=request_data["current_username"],
+            current_password=request_data["current_password"],
             current_mac_address=(
-                request_data.get["current_mac_address"].lower()
+                request_data["current_mac_address"].lower()
                 if request_data.get("current_mac_address", None) is not None else
                 None
             ),
             username=request_data.get("username", None),
             password=request_data.get("password", None),
             mac_address=(
-                request_data.get["mac_address"].lower()
+                request_data["mac_address"].lower()
                 if request_data.get("mac_address", None) is not None else
                 None
             ),
