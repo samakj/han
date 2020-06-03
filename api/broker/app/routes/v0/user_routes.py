@@ -65,7 +65,7 @@ def get_user(user_id: int) -> JSONResponse:
     })
 
 
-@USERS_V0_BLUEPRINT.route("/users/username/<string:username>", methods=["GET"])
+@USERS_V0_BLUEPRINT.route("/users/username/<string:username>/", methods=["GET"])
 def get_user_by_username(username: str) -> JSONResponse:
     return JSONResponse({
         "user": current_app.user_store.get_user_by_username(
@@ -75,7 +75,7 @@ def get_user_by_username(username: str) -> JSONResponse:
     })
 
 
-@USERS_V0_BLUEPRINT.route("/users/mac-address/<string:mac_address>", methods=["GET"])
+@USERS_V0_BLUEPRINT.route("/users/mac-address/<string:mac_address>/", methods=["GET"])
 def get_user_by_mac_address(mac_address: str) -> JSONResponse:
     return JSONResponse({
         "user": current_app.user_store.get_user_by_mac_address(
