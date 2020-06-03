@@ -1,10 +1,12 @@
 import json
 import random
+import requests
 from argparse import ArgumentParser
 from shutil import copyfile
 from os import listdir, system, path as path_lib
 from typing import Any, Dict, Tuple
 
+BACKEND_API_ROOT = "127.0.0.1:9400"
 TLS_CA_FOLDER = "/Users/samakj/repos/HAN/network/tls"
 PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-"
 PASSWORD_LENGTH = 16
@@ -64,7 +66,7 @@ def write_cert_to_h_file(file, cert_name: str, cert: str) -> None:
     file.write(f';\n')
 
 
-def build(path: str, regenerate_password: bool = False) -> None:
+def build(path: str, regenerate_password: bool = True) -> None:
     print(f"Building {path}...")
     build_dir = f"./builds/{path.strip('/')}"
     node_id = path.strip('/').split('/')[-1]
@@ -119,6 +121,22 @@ def build(path: str, regenerate_password: bool = False) -> None:
                 value = f"\"{value}\""
 
             file.write(f"#define {name} {value}\n")
+
+    if "MQTT_PASSWORD" in variables:
+        print("Updating backend")
+        try:
+            user = requests.get(f"{BACKEND_API_ROOT}/v0/users/username/{node_id}/").json()["user"]
+            requests.patch(
+                f"{BACKEND_API_ROOT}/v0/users/{user['user_id']}/",
+                json={
+                    "current_username": node_id,
+                    "current_password": previous_built_config["MQTT_PASSWORD"],
+                    "current_mac_address": user["mac_address"],
+                    "password": variables["MQTT_PASSWORD"]
+                },
+            )
+        except requests.HTTPError:
+            print(" -> ## FAILED ## please update manually")
 
 
 if __name__ == "__main__":
