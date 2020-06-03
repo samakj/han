@@ -24,13 +24,9 @@ float humidity;
 float temperature;
 bool motion;
 
-char HUMIDITY_TOPIC[32];
-char TEMPERATURE_TOPIC[32];
-char MOTION_TOPIC[32];
-
-sprintf(HUMIDITY_TOPIC, "%s/%s/%s", V0_REPORT_TOPIC_ROOT, NODE_ID, (char)"humidity")
-sprintf(TEMPERATURE_TOPIC, "%s/%s/%s", V0_REPORT_TOPIC_ROOT, NODE_ID, (char)"temperature")
-sprintf(MOTION_TOPIC, "%s/%s/%s", V0_REPORT_TOPIC_ROOT, NODE_ID, (char)"motion")
+String HUMIDITY_TOPIC;
+String TEMPERATURE_TOPIC;
+String MOTION_TOPIC;
 
 void setup()
 {
@@ -40,7 +36,8 @@ void setup()
     Serial.println("***********************************************************");
     Serial.println("* ~ Starting thm_sensor establish tls connection sketch ~ *");
     Serial.println("***********************************************************");
-    Serial.println("");
+
+    createReportTopics();
 
     connectToWifi();
     connectToNtpTime();
@@ -55,51 +52,60 @@ void loop()
 
     float h = dht.readHumidity();
     float t = dht.readTemperature();
-    bool m = digitalRead(D7);
-    float now = time(nullptr)
+    bool m = digitalRead(MOTION_SENSOR_PIN);
 
-    Serial.print("Temperature: ");
-    if (t != temperature) {
+    time_t tm = time(nullptr);
+    char now[29];
+    strftime(now, 29, "%FT%T+00:00", gmtime(&tm));
+
+    if (!isnan(t) && t != temperature)
+    {
         temperature = t;
 
-        char temperature_report[16];
-        sprintf(temperature_report, "%d:%f", now, temperature)
-        mqttClient.publish(TEMPERATURE_TOPIC, temperature_report)
+        String temperature_report;
+        temperature_report += now;
+        temperature_report += ":";
+        temperature_report += temperature;
 
-        Serial.print(temperature);
-    } else {
-        Serial.print("     ");
+        Serial.print("Reporting to ");
+        Serial.print(TEMPERATURE_TOPIC);
+        Serial.print(" -> ");
+        Serial.println(temperature_report);
+
+        mqttClient.publish(TEMPERATURE_TOPIC.c_str(), temperature_report.c_str());
     }
-    Serial.print("°c");
-    Serial.print(" | ");
-    Serial.print("Humidity: ");
-    if (h != humidity) {
+    if (!isnan(h) && h != humidity)
+    {
         humidity = h;
 
-        char humidity_report[16];
-        sprintf(humidity_report, "%d:%f", now, humidity)
-        mqttClient.publish(HUMIDITY_TOPIC, humidity_report)
+        String humidity_report;
+        humidity_report += now;
+        humidity_report += ":";
+        humidity_report += humidity;
 
-        Serial.print(humidity);
-    } else {
-        Serial.print("     ");
+        Serial.print("Reporting to ");
+        Serial.print(HUMIDITY_TOPIC);
+        Serial.print(" -> ");
+        Serial.println(humidity_report);
+
+        mqttClient.publish(HUMIDITY_TOPIC.c_str(), humidity_report.c_str());
     }
-    Serial.print("%");
-    Serial.print(" | ");
-    Serial.print("Motion: ");
-    if (m != motion) {
+    if (!isnan(m) && m != motion)
+    {
         motion = m;
 
-        char motion_report[16];
-        sprintf(motion_report, "%d:%s", now, motion ? "TRUE" : "FALSE")
-        mqttClient.publish(MOTION_TOPIC, motion_report)
+        String motion_report;
+        motion_report += now;
+        motion_report += ":";
+        motion_report += motion ? "TRUE" : "FALSE";
 
-        Serial.print(motion);
-    } else {
-        Serial.print(" ");
+        Serial.print("Reporting to ");
+        Serial.print(MOTION_TOPIC);
+        Serial.print(" -> ");
+        Serial.println(motion_report);
+
+        mqttClient.publish(MOTION_TOPIC.c_str(), motion_report.c_str());
     }
-    Serial.print(" | ");
-    Serial.println();
 
     delay(MEASUREMENT_INTERVAL);
 }
@@ -109,16 +115,20 @@ void connectToWifi()
     if (WiFi.status() != WL_CONNECTED)
     {
         int start = millis();
-        Serial.print("Connecting to ");
-        Serial.println(WIFI_SSID);
-
-        WiFi.mode(WIFI_STA);
-        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
         int i = 0;
         while (WiFi.status() != WL_CONNECTED)
         {
-            !(i % 32) ? Serial.println(".") : Serial.print(".");
+            if (!(i % 32))
+            {
+                Serial.println("");
+                Serial.print("Connecting to ");
+                Serial.print(WIFI_SSID);
+                WiFi.mode(WIFI_STA);
+                WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+            }
+
+            Serial.print(".");
             i++;
             delay(250);
         }
@@ -154,14 +164,18 @@ String MACAddressByteArrayToString(byte MACAddressByteArray[6])
 void connectToNtpTime()
 {
     int start = millis();
-    Serial.print("Connnecting to time server @ ");
-    Serial.println(NTP_SERVER);
 
     int i = 0;
-
-    while (time(nullptr) < 1577836800) {
-        if (!(i % 4)) configTime(TIMEZONE * 3600, DST * 3600, NTP_SERVER);
-        !(i % 32) ? Serial.println(".") : Serial.print(".");
+    while (time(nullptr) < 1577836800)
+    {
+        if(!(i % 32))
+        {
+            Serial.println("");
+            Serial.print("Connnecting to time server @ ");
+            Serial.print(NTP_SERVER);
+            configTime(TIMEZONE * 3600, DST * 3600, NTP_SERVER);
+        }
+        Serial.print(".");
         i++;
         delay(250);
     }
@@ -183,19 +197,22 @@ void connectToMqtt()
         int start = millis();
 
         wifiClient.setInsecure();
-//        wifiClient.setTrustAnchors(new BearSSL::X509List(CA_CERT));
-
-        Serial.print("Connecting to MQTT @ ");
-        Serial.print(MQTT_HOST);
-        Serial.print(":");
-        Serial.println(MQTT_PORT);
-
-        mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-        mqttClient.connect(MACAddress.c_str(), (char*)NODE_ID, (char*)MQTT_PASSWORD);
 
         int i = 0;
-        while (!mqttClient.connected()) {
-            !(i % 32) ? Serial.println(".") : Serial.print(".");
+        while (!mqttClient.connected())
+        {
+            if (!(i % 32))
+            {
+                Serial.println("");
+                Serial.print("Connecting to MQTT @ ");
+                Serial.print(MQTT_HOST);
+                Serial.print(":");
+                Serial.print(MQTT_PORT);
+
+                mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+                mqttClient.connect(MACAddress.c_str(), (char*)NODE_ID, (char*)MQTT_PASSWORD);
+            }
+            Serial.print(".");
             mqttClient.loop();
             i++;
             delay(250);
@@ -206,8 +223,30 @@ void connectToMqtt()
         Serial.print((millis() - start) / 1000.0);
         Serial.println("s.");
 
-        if (wifiClient.verify(CA_CERT, MQTT_HOST)) {
+        if (wifiClient.verify(CA_CERT, MQTT_HOST))
+        {
             Serial.println("Connection security verified.");
         }
     }
+}
+
+void createReportTopics()
+{
+    HUMIDITY_TOPIC += V0_REPORT_TOPIC_ROOT;
+    HUMIDITY_TOPIC += "/";
+    HUMIDITY_TOPIC += NODE_ID;
+    HUMIDITY_TOPIC += "/";
+    HUMIDITY_TOPIC += "humidity";
+
+    TEMPERATURE_TOPIC += V0_REPORT_TOPIC_ROOT;
+    TEMPERATURE_TOPIC += "/";
+    TEMPERATURE_TOPIC += NODE_ID;
+    TEMPERATURE_TOPIC += "/";
+    TEMPERATURE_TOPIC += "temperature";
+
+    MOTION_TOPIC += V0_REPORT_TOPIC_ROOT;
+    MOTION_TOPIC += "/";
+    MOTION_TOPIC += NODE_ID;
+    MOTION_TOPIC += "/";
+    MOTION_TOPIC += "motion";
 }
