@@ -113,7 +113,7 @@ class AccessControlStore:
         for row in db_response:
             response_dict = dict(row)
             if "action" in response_dict:
-                response_dict["action_verbose"] = ActionMap[db_response["action"]]
+                response_dict["action_verbose"] = ActionMap[response_dict["action"]]
 
             access_controls.append(AccessControl(**dict(response_dict)))
 
