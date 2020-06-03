@@ -122,8 +122,8 @@ class DeviceTypeStore:
 
         for row in db_response:
             device_type = DeviceType(**dict(row))
-            if fields and "location_tags" in fields:
-                device_type.location_tags = self.get_device_type_metrics(device_type_id=device_type.device_type_id)
+            if fields and "metrics" in fields:
+                device_type.metrics = self.get_device_type_metrics(device_type_id=device_type.device_type_id)
             device_types.append(device_type)
 
         return device_types

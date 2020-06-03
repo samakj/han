@@ -152,7 +152,7 @@ class ReportStore:
             known_devices = {}
 
             if fields and ("metric" in fields or convert_metric):
-                if known_metrics.get(report.metric_id, None) is None:
+                if report.metric_id not in known_metrics:
                     known_metrics[report.metric_id] = self.metric_store.get_metric(
                         metric_id=report.metric_id
                     )
@@ -164,7 +164,7 @@ class ReportStore:
                         value=report.value
                     )
             if fields and "device" in fields:
-                if known_devices.get(report.device_id, None) is None:
+                if report.device_id not in known_devices:
                     known_devices[report.device_id] = self.device_store.get_device(
                         device_id=report.device_id
                     )
