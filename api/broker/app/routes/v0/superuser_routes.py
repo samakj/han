@@ -1,7 +1,6 @@
 import logging
 from flask import Blueprint, current_app, request
 
-from flagon.exceptions import APIError
 from flagon.responses import JSONResponse
 
 LOG = logging.getLogger(__name__)
@@ -12,18 +11,19 @@ SUPERUSERS_V0_BLUEPRINT = Blueprint(name="v0_superuser", import_name=__name__)
 def authorise_superuser() -> JSONResponse:
     request_data = request.get_json()
 
+    error = None
+
     user = current_app.user_store.get_user_by_username(username=request_data["username"])
 
     if user is None:
-        raise APIError(404, "USER_NOT_FOUND", {"Ok": False, "Error": "User not found"})
+        error = "User not found"
 
-    superuser = current_app.superuser_store.get_superuser_by_user_id(user_id=user.user_id)
-
-    if superuser is None:
-        raise APIError(400, "INVALID_SUPERUSER", {"Ok": False, "Error": "Invalid super user"})
+    if error is None and current_app.superuser_store.get_superuser_by_user_id(user_id=user.user_id) is None:
+        error = "Invalid super user"
 
     return JSONResponse({
-        "Ok": True
+        "Ok": error is None,
+        "Error": error,
     })
 
 

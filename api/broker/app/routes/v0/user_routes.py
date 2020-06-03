@@ -1,7 +1,6 @@
 import logging
 from flask import Blueprint, current_app, request
 
-from flagon.exceptions import APIError
 from flagon.responses import JSONResponse
 
 LOG = logging.getLogger(__name__)
@@ -15,27 +14,24 @@ def authorise_user() -> JSONResponse:
     user = current_app.user_store.get_user_by_username(username=request_data["username"])
     mac_address = request_data["clientid"].lower() if request_data.get("clientid", None) is not None else None
 
-    if not user:
-        error = "User not found"
-        LOG.error(error)
-        raise APIError(404, "USER_NOT_FOUND", data={"Ok": False, "Error": error})
-    if mac_address != user.mac_address:
-        error = "Invalid mac address for user"
-        LOG.error(error)
-        raise APIError(400, "BAD_REQUEST", data={"Ok": False, "Error": error})
+    error = None
 
-    if not current_app.user_store.verify_user(
+    if not user:
+        error = f"User not found: {request_data['username']}"
+    if error is None and mac_address != user.mac_address:
+        error = "Invalid mac address for user"
+
+    if error is None and not current_app.user_store.verify_user(
         user_id=user.user_id,
         username=user.username,
         password=request_data["password"],
         mac_address=user.mac_address,
     ):
         error = "User verification failed"
-        LOG.error(error)
-        raise APIError(401, "UNAUTHORISED", data={"Ok": False, "Error": error})
 
     return JSONResponse({
-        "Ok": True
+        "Ok": error is None,
+        "Error": error,
     })
 
 

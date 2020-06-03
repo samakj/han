@@ -1,7 +1,6 @@
 import logging
 from flask import Blueprint, current_app, request
 
-from flagon.exceptions import APIError
 from flagon.responses import JSONResponse
 
 LOG = logging.getLogger(__name__)
@@ -12,22 +11,28 @@ ACCESS_CONTROLS_V0_BLUEPRINT = Blueprint(name="v0_access_control", import_name=_
 def authorise_access_control() -> JSONResponse:
     request_data = request.get_json()
 
+    error = None
+
     user = current_app.user_store.get_user_by_username(username=request_data["username"])
 
     if user is None:
-        raise APIError(404, "USER_NOT_FOUND", {"Ok": False, "Error": "User not found"})
+        error = "User not found"
 
-    access_controls = current_app.access_control_store.get_access_controls(
-        user_id=user.user_id,
-        topic=request_data["topic"],
-        action=request_data["acc"],
-    )
-
-    if len(access_controls) != 1:
-        raise APIError(401, "UNAUTHORIZED", {"Ok": False, "Error": "Invalid user access"})
+    if (
+        error is None and
+        len(
+            current_app.access_control_store.get_access_controls(
+                user_id=user.user_id,
+                topic=request_data["topic"],
+                action=request_data["acc"],
+            )
+        ) != 1
+    ):
+        error = "Invalid user access"
 
     return JSONResponse({
-        "Ok": True
+        "Ok": error is None,
+        "Error": error,
     })
 
 
