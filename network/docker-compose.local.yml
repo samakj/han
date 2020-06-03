@@ -15,9 +15,9 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "0.0.0.0:${BROKER_PORT}:${BROKER_PORT}"
-  client:
+  broker_client:
     build: client
-    container_name: client
+    container_name: broker_client
     volumes:
       - ./client:/app
       - ../libs/python:/libs
