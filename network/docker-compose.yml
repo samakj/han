@@ -11,32 +11,10 @@ services:
       - LC_ALL=${LANG}
       - LANG=${LANG}
       - VIRTUAL_PORT=${BROKER_PORT}
-      - BACKEND_HOST=backend
+      - BACKEND_HOST=${BACKEND_HOST}
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
-    links:
-      - backend
-  backend:
-    build: ./backend
-    container_name: backend
-    volumes:
-      - ./backend:/app
-      - ../libs/python:/libs
-    environment:
-      - DB_HOST=db
-      - DB_NAME=${DB_NAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - FLASK_ENV=${FLASK_ENV}
-      - LC_ALL=${LANG}
-      - LANG=${LANG}
-      - VIRTUAL_PORT=${BACKEND_PORT}
-    ports:
-      - "${BACKEND_HOST}:${BACKEND_PORT}:${BACKEND_PORT}"
-    links:
-      - db
   client:
     build: client
     container_name: client
@@ -44,6 +22,8 @@ services:
       - ./client:/app
       - ../libs/python:/libs
     environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - BACKEND_PORT=${BACKEND_PORT}
       - BROKER_HOST=broker
       - BROKER_PORT=${BROKER_PORT}
       - CLIENT_ID=${CLIENT_ID}
@@ -54,19 +34,3 @@ services:
       - PYTHONUNBUFFERED=1
     links:
       - broker
-  db:
-    build: ./db
-    container_name: db
-    volumes:
-      - ./db/data:/var/lib/postgresql/data
-      - ./db/backup:/backup
-    environment:
-      - ALLOW_IP_RANGE=0.0.0.0/0
-      - POSTGRES_DBNAME=${DB_NAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_USER=${DB_USER}
-      - LOCAL_DATA_FOLDER=${LOCAL_DATA_FOLDER}
-      - LOCAL_BACKUP_FOLDER=${LOCAL_BACKUP_FOLDER}
-      - VIRTUAL_PORT=${DB_PORT}
-    ports:
-      - "${DB_HOST}:${DB_PORT}:${DB_PORT}"
