@@ -36,7 +36,7 @@ class ReportStore:
 
     def create_report(
         self,
-        device_id: int,
+        device_id: str,
         metric_id: int,
         value: str,
         reported_at: Optional[datetime] = None,
