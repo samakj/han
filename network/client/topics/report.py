@@ -20,7 +20,7 @@ def handle_report(message: MQTTMessage, **_) -> None:
 
     requests.post(
         url=(
-            f"{os.environ['DEVICES_API_HOST']}:{os.environ['DEVICES_API_PORT']}"
+            f"{os.environ['DEVICES_HOST']}:{os.environ['DEVICES_PORT']}"
             f"/v0/reports/"
         ),
         json={
