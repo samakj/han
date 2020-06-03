@@ -53,6 +53,7 @@ def create_app() -> Flagon:
     app.report_store= ReportStore(
         db=app.db,
         device_store=app.device_store,
+        device_type_metric_store=app.device_type_metric_store,
         metric_store=app.metric_store,
     )
 

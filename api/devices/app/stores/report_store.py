@@ -1,7 +1,7 @@
 from datetime import datetime
-from dataclasses import asdict
 from typing import List, Optional, Set, Union
 
+from flagon.exceptions import APIError
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
@@ -17,6 +17,7 @@ from stores.queries.report_queries import (
     LOAD_REPORTS_FROM_BACKUP,
 )
 from stores.device_store import DeviceStore
+from stores.device_type_metric_store import DeviceTypeMetricStore
 from stores.metric_store import MetricStore
 
 ALL_FIELDS = {"report_id", "reported_at", "device_id", "metric_id", "value"}
@@ -28,11 +29,13 @@ class ReportStore:
         self,
         db: Engine,
         device_store: DeviceStore,
+        device_type_metric_store: DeviceTypeMetricStore,
         metric_store: MetricStore,
     ):
         self.db = db
         self.metric_store = metric_store
         self.device_store = device_store
+        self.device_type_metric_store = device_type_metric_store
 
     def create_report(
         self,
@@ -41,6 +44,16 @@ class ReportStore:
         value: str,
         reported_at: Optional[datetime] = None,
     ) -> Report:
+        device = self.device_store.get_device(device_id=device_id)
+
+        if device is None:
+            raise APIError(404, "DEVICE_NOT_FOUND")
+
+        metrics = self.device_type_metric_store.get_device_type_metrics(device_type_id=device.device_type_id)
+
+        if metric_id not in {metric.metric_id for metric in metrics}:
+            raise APIError(400, "BAD_REPORT_METRIC")
+
         db_response = self.db.execute(
             text(CREATE_REPORT_QUERY),
             reported_at=reported_at or datetime.utcnow(),
