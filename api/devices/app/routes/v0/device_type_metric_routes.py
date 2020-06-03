@@ -10,7 +10,7 @@ def create_device_type_metric() -> JSONResponse:
     request_data = request.get_json()
     return JSONResponse({
         "device_type_metric": current_app.device_type_metric_store.create_device_type_metric(
-            device_id=request_data["device_id"],
+            device_type_id=request_data["device_type_id"],
             metric_id=request_data["metric_id"],
             reportable=request_data["reportable"],
             commandable=request_data["commandable"],
@@ -34,7 +34,7 @@ def get_device_type_metrics() -> JSONResponse:
         "device_type_metrics": current_app.device_type_metric_store.get_device_type_metrics(
             fields=set(request.args.getlist("fields")),
             device_type_metric_id=set(request.args.getlist("device_type_metric_id")),
-            device_id=set(request.args.getlist("device_id")),
+            device_type_id=set(request.args.getlist("device_id")),
             metric_id=set(request.args.getlist("metric_id")),
             reportable=arg_to_bool(request.args.get("reportable", None), None),
             commandable=arg_to_bool(request.args.get("commandable", None), None),
@@ -50,7 +50,7 @@ def update_device_type_metric(device_type_metric_id: int) -> JSONResponse:
     return JSONResponse({
         "device_type_metric": current_app.device_type_metric_store.update_device_type_metric(
             device_type_metric_id=device_type_metric_id,
-            device_id=request_data.get("device_id", None),
+            device_type_id=request_data.get("device_id", None),
             metric_id=request_data.get("metric_id", None),
             reportable=request_data.get("reportable", None),
             commandable=request_data.get("commandable", None),
