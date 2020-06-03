@@ -77,10 +77,7 @@ class DeviceStore:
         if device and fields and "location_tags" in fields:
             device.location_tags = self.get_device_location_tags(device_id=device_id)
         if device and fields and "device_type" in fields:
-            device.device_type = self.device_type_store.get_device_type(
-                device.device_type_id,
-                fields={"device_type_id", "name", "metrics"},
-            )
+            device.device_type = self.device_type_store.get_device_type(device_type_id=device.device_type_id)
 
         return device
 
@@ -126,10 +123,7 @@ class DeviceStore:
             if fields and "location_tags" in fields:
                 device.location_tags = self.get_device_location_tags(device_id=device.device_id)
             if fields and "device_type" in fields:
-                device.device_type = self.device_type_store.get_device_type(
-                    device.device_type_id,
-                    fields={"device_type_id", "name", "metrics"},
-                )
+                device.device_type = self.device_type_store.get_device_type(device_type_id=device.device_type_id)
             devices.append(device)
 
         return devices
