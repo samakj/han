@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS metrics
 CREATE TABLE IF NOT EXISTS device_type_metrics
 (
     device_type_metric_id SERIAL PRIMARY KEY,
-    device_type_id               INTEGER NOT NULL REFERENCES device_types (device_type_id),
-    metric_id             INTEGER NOT NULL REFERENCES metrics (metric_id)
+    device_type_id        INTEGER NOT NULL REFERENCES device_types (device_type_id),
+    metric_id             INTEGER NOT NULL REFERENCES metrics (metric_id),
+    reportable            BOOLEAN NOT NULL,
+    commandable           BOOLEAN NOT NULL
 );

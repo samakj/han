@@ -1,9 +1,9 @@
 import os
 
 CREATE_DEVICE_TYPE_METRIC_QUERY = """
-INSERT INTO device_type_metrics (device_type_id, metric_id)
-     VALUES (:device_type_id, :metric_id)
-  RETURNING device_type_metric_id, device_type_id, metric_id
+INSERT INTO device_type_metrics (device_type_id, metric_id, reportable, commandable)
+     VALUES (:device_type_id, :metric_id, :reportable, :commandable)
+  RETURNING device_type_metric_id, device_type_id, metric_id, reportable, commandable
 """
 
 GET_DEVICE_TYPE_METRIC_QUERY_TEMPLATE = """
@@ -23,7 +23,7 @@ UPDATE_DEVICE_TYPE_METRIC_QUERY = """
    UPDATE device_type_metrics
       SET {set_conditions}
     WHERE device_type_metric_id = :device_type_metric_id
-RETURNING device_type_metric_id, device_type_id, metric_id
+RETURNING device_type_metric_id, device_type_id, metric_id, reportable, commandable
 """
 
 DELETE_DEVICE_TYPE_METRIC_QUERY = """

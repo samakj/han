@@ -14,24 +14,34 @@ from stores.queries.device_type_metric_queries import (
     LOAD_DEVICE_TYPE_METRICS_FROM_BACKUP,
 )
 
-ALL_FIELDS = {"device_type_metric_id", "device_type_id", "metric_id"}
+ALL_FIELDS = {"device_type_metric_id", "device_type_id", "metric_id", "reportable", "commandable"}
 
 
 class DeviceTypeMetricStore:
     def __init__(self, db: Engine):
         self.db = db
 
-    def create_device_type_metric(self, device_type_id: int, metric_id: int) -> DeviceTypeMetric:
+    def create_device_type_metric(
+        self,
+        device_type_id: int,
+        metric_id: int,
+        reportable: bool,
+        commandable: bool,
+    ) -> DeviceTypeMetric:
         db_response = self.db.execute(
             text(CREATE_DEVICE_TYPE_METRIC_QUERY),
             device_type_id=device_type_id,
             metric_id=metric_id,
+            reportable=reportable,
+            commandable=commandable,
         ).fetchone()
 
         return DeviceTypeMetric(
             device_type_metric_id=db_response["device_type_metric_id"],
             device_type_id=db_response["device_type_id"],
             metric_id=db_response["metric_id"],
+            reportable=db_response["reportable"],
+            commandable=db_response["commandable"],
         )
 
     def get_device_type_metric(
@@ -56,6 +66,8 @@ class DeviceTypeMetricStore:
         device_type_metric_id: Optional[Union[Set[int], int]] = None,
         device_type_id: Optional[Union[Set[int], int]] = None,
         metric_id: Optional[Union[Set[int], int]] = None,
+        reportable: Optional[bool] = None,
+        commandable: Optional[bool] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
     ) -> List[DeviceTypeMetric]:
@@ -76,6 +88,10 @@ class DeviceTypeMetricStore:
                 f"metric_id = "
                 f"{'ANY(:metric_id)' if isinstance(metric_id, set) else ':metric_id'}"
             )
+        if reportable is not None:
+            where_conditions.add("reportable = :reportable")
+        if commandable is not None:
+            where_conditions.add("commandable = :commandable")
 
         db_response = self.db.execute(
             text(
@@ -91,6 +107,8 @@ class DeviceTypeMetricStore:
             device_type_metric_id=list(device_type_metric_id) if isinstance(device_type_metric_id, set) else device_type_metric_id,
             device_type_id=list(device_type_id) if isinstance(device_type_id, set) else device_type_id,
             metric_id=list(metric_id) if isinstance(metric_id, set) else metric_id,
+            reportable=reportable,
+            commandable=commandable,
         )
 
         return [DeviceTypeMetric(**dict(row)) for row in db_response]
@@ -100,6 +118,8 @@ class DeviceTypeMetricStore:
         device_type_metric_id: int,
         device_type_id: Optional[int] = None,
         metric_id: Optional[int] = None,
+        reportable: Optional[bool] = None,
+        commandable: Optional[bool] = None,
     ) -> Optional[DeviceTypeMetric]:
         set_conditions: Set[str] = set()
 
@@ -107,6 +127,10 @@ class DeviceTypeMetricStore:
             set_conditions.add("device_type_id = :device_type_id")
         if metric_id:
             set_conditions.add("metric_id = :metric_id")
+        if reportable is not None:
+            set_conditions.add("reportable = :reportable")
+        if commandable is not None:
+            set_conditions.add("commandable = :commandable")
 
         if not set_conditions:
             return self.get_device_type_metric(device_type_metric_id=device_type_metric_id)
@@ -116,12 +140,16 @@ class DeviceTypeMetricStore:
             device_type_metric_id=device_type_metric_id,
             device_type_id=device_type_id,
             metric_id=metric_id,
+            reportable=reportable,
+            commandable=commandable,
         ).fetchone()
 
         return DeviceTypeMetric(
             device_type_metric_id=db_response["device_type_metric_id"],
             device_type_id=db_response["device_type_id"],
             metric_id=db_response["metric_id"],
+            reportable=db_response["reportable"],
+            commandable=db_response["commandable"],
         ) if db_response else None
 
     def delete_device_type_metric(self, device_type_metric_id: int) -> Optional[int]:
