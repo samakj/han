@@ -1,5 +1,6 @@
 from flask import Blueprint, current_app, request
 from flagon.responses import JSONResponse
+from flagon.request_args import arg_to_bool
 
 REPORTS_V0_BLUEPRINT = Blueprint(name="v0_reports", import_name=__name__)
 
@@ -23,6 +24,7 @@ def get_report(report_id: int) -> JSONResponse:
         "report": current_app.report_store.get_report(
             report_id=report_id,
             fields=set(request.args.getlist("fields")),
+            convert_metric=arg_to_bool(request.args.get("convert_metric", None), True),
         )
     })
 
@@ -40,6 +42,7 @@ def get_reports() -> JSONResponse:
             order_by=request.args.get("order_by", None),
             order_by_direction=request.args.get("order_by_direction", None),
             limit=int(request.args["limit"]) if request.args.get("limit", None) is not None else None,
+            convert_metric=arg_to_bool(request.args.get("convert_metric", None), True),
         )
     })
 

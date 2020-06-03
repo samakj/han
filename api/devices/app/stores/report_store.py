@@ -5,6 +5,7 @@ from typing import List, Optional, Set, Union
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from helpers.metric_value_converter import convert_metric_value
 from models.report_model import Report
 from stores.queries.report_queries import (
     CREATE_REPORT_QUERY,
@@ -60,6 +61,7 @@ class ReportStore:
         self,
         report_id: int,
         fields: Optional[Set[str]] = None,
+        convert_metric: bool = True,
     ) -> Optional[Report]:
         db_response = self.db.execute(
             text(
@@ -72,6 +74,15 @@ class ReportStore:
 
         report = Report(**dict(db_response)) if db_response else None
 
+        if report and fields and ("metric" in fields or convert_metric):
+            metric = self.metric_store.get_metric(metric_id=report.metric_id)
+            if "metric" in fields:
+                report.metric = metric
+            if convert_metric:
+                report.value = convert_metric_value(
+                    value_type=metric.value_type,
+                    value=report.value
+                )
         if report and fields and "metric" in fields:
             report.metric = self.metric_store.get_metric(metric_id=report.metric_id)
         if report and fields and "device" in fields:
@@ -89,7 +100,8 @@ class ReportStore:
         reported_at_lte: Optional[datetime] = None,
         order_by: Optional[str] = None,
         order_by_direction: Optional[str] = None,
-        limit: Optional[int] = None
+        limit: Optional[int] = None,
+        convert_metric: bool = True,
     ) -> List[Report]:
         where_conditions: Set[str] = set()
 
@@ -139,12 +151,18 @@ class ReportStore:
             known_metrics = {}
             known_devices = {}
 
-            if fields and "metric" in fields:
+            if fields and ("metric" in fields or convert_metric):
                 if known_metrics.get(report.metric_id, None) is None:
                     known_metrics[report.metric_id] = self.metric_store.get_metric(
                         metric_id=report.metric_id
                     )
-                report.metric = known_metrics[report.metric_id]
+                if "metric" in fields:
+                    report.metric = known_metrics[report.metric_id]
+                if convert_metric:
+                    report.value = convert_metric_value(
+                        value_type=known_metrics[report.metric_id].value_type,
+                        value=report.value
+                    )
             if fields and "device" in fields:
                 if known_devices.get(report.device_id, None) is None:
                     known_devices[report.device_id] = self.device_store.get_device(
