@@ -46,7 +46,7 @@ def get_report(report_id: int) -> JSONResponse:
 @REPORTS_V0_BLUEPRINT.route("/reports/", methods=["GET"])
 def get_reports() -> JSONResponse:
     return JSONResponse({
-        "reports": current_app.report_store.get_report(
+        "reports": current_app.report_store.get_reports(
             fields=set(request.args.getlist("fields")),
             report_id=set(request.args.getlist("report_id")),
             metric_id=set(request.args.getlist("metric_id")),
