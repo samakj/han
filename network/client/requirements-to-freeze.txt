@@ -1,1 +1,3 @@
+requests
+
 git+git://github.com/samakj/midge
