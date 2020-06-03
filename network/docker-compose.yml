@@ -22,13 +22,13 @@ services:
       - ./client:/app
       - ../libs/python:/libs
     environment:
-      - BACKEND_HOST=${BACKEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
       - BROKER_HOST=broker
       - BROKER_PORT=${BROKER_PORT}
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_USER=${CLIENT_USER}
       - CLIENT_PASSWORD=${CLIENT_PASSWORD}
+      - DEVICES_HOST=${DEVICES_HOST}
+      - DEVICES_PORT=${DEVICES_PORT}
       - LC_ALL=${LANG}
       - LANG=${LANG}
       - PYTHONUNBUFFERED=1
