@@ -1,4 +1,7 @@
+import os
 import logging
+import requests
+from datetime import datetime
 
 from paho.mqtt.client import MQTTMessage
 from midge.topics.topic_blueprint import TopicBlueprint
@@ -11,9 +14,19 @@ REPORT_TOPIC_BLUEPRINT = TopicBlueprint()
 
 @REPORT_TOPIC_BLUEPRINT.topic("/report/#", actions=["message"])
 def handle_report(message: MQTTMessage, **_) -> None:
-    node_id = message.payload.get('_id', None)
+    _, device_id, metric_name = message.topic.strip("/").split("/")
 
-    if node_id is None:
-        LOG.error(f"Meta requested with invalid request meta: \n{message.payload}")
+    LOG.info(f"Handling {metric_name} report from {device_id}.")
 
-    LOG.info(f"{message.payload['_id']} reported to '{message.topic}'.")
+    requests.post(
+        url=(
+            f"{os.environ['DEVICES_API_HOST']}:{os.environ['DEVICES_API_PORT']}"
+            f"/v0/reports/"
+        ),
+        json={
+            "device_id": device_id,
+            "reported_at": datetime.utcfromtimestamp(message.payload.split(":")[0]),
+            "metric_name": metric_name,
+            "value": message.payload.split(":")[1],
+        }
+    )
