@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, request
+from flagon.exceptions import APIError
 from flagon.responses import JSONResponse
 from flagon.request_args import arg_to_bool
 
@@ -8,11 +9,24 @@ REPORTS_V0_BLUEPRINT = Blueprint(name="v0_reports", import_name=__name__)
 @REPORTS_V0_BLUEPRINT.route("/reports/", methods=["POST"])
 def create_report() -> JSONResponse:
     request_data = request.get_json()
+
+    metric_id = request_data.get("metric_id", None)
+
+    if "metric_name" in request_data:
+        metric = current_app.metric_store.get_metric_by_name(name=request_data["metric_name"])
+        metric_id = metric.metric_id if metric is not None else None
+    if "metric_abbreviation" in request_data:
+        metric = current_app.metric_store.get_metric_by_abbreviation(abbreviation=request_data["metric_abbreviation"])
+        metric_id = metric.metric_id if metric is not None else None
+
+    if metric_id is None:
+        raise APIError(400, "BAD_METRIC_ID")
+
     return JSONResponse({
         "report": current_app.report_creation_handler.create_report(
             reported_at=request_data["reported_at"],
             device_id=request_data["device_id"],
-            metric_id=request_data["metric_id"],
+            metric_id=metric_id,
             value=request_data["value"],
         )
     })
