@@ -6,7 +6,7 @@ from shutil import copyfile
 from os import listdir, system, path as path_lib
 from typing import Any, Dict, Tuple
 
-BACKEND_API_ROOT = "127.0.0.1:9400"
+BACKEND_API_ROOT = "http://127.0.0.1:9400"
 TLS_CA_FOLDER = "/Users/samakj/repos/HAN/network/tls"
 PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-"
 PASSWORD_LENGTH = 16
