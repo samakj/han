@@ -14,7 +14,7 @@ services:
       - BACKEND_HOST=127.0.0.1
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
-      - "127.0.0.1:${BROKER_PORT}:${BROKER_PORT}"
+      - "0.0.0.0:${BROKER_PORT}:${BROKER_PORT}"
   client:
     build: client
     container_name: client
