@@ -42,6 +42,9 @@ void setup()
     connectToWifi();
     connectToNtpTime();
     connectToMqtt();
+
+    pinMode(MOTION_SENSOR_PIN, INPUT);
+    dht.begin();
 }
 
 void loop()
