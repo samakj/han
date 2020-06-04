@@ -15,6 +15,20 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "${BROKER_HOST}:${BROKER_PORT}:${BROKER_PORT}"
+    links:
+      - broker_cache
+  broker_cache:
+    build: cache
+    container_name: broker_cache
+    environment:
+      - LC_ALL=${LANG}
+      - LANG=${LANG}
+      - CACHE_PASSWORD=${CACHE_PASSWORD}
+      - VIRTUAL_PORT=${CACHE_PORT}
+    ports:
+      - "127.0.0.1:${BROKER_PORT}:${BROKER_PORT}"
+    volumes:
+      - ./cache/data:/data
   broker_client:
     build: client
     container_name: broker_client
