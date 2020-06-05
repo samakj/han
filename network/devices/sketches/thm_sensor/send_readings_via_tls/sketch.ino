@@ -76,7 +76,7 @@ void loop()
         Serial.println(temperature_report);
 
         mqttClient.publish(TEMPERATURE_TOPIC.c_str(), temperature_report.c_str());
-        wifiClient.flush();
+        mqttClient.loop();
     }
     if (!isnan(h) && h != humidity)
     {
@@ -93,7 +93,7 @@ void loop()
         Serial.println(humidity_report);
 
         mqttClient.publish(HUMIDITY_TOPIC.c_str(), humidity_report.c_str());
-        wifiClient.flush();
+        mqttClient.loop();
     }
     if (!isnan(m) && m != motion)
     {
@@ -110,7 +110,7 @@ void loop()
         Serial.println(motion_report);
 
         mqttClient.publish(MOTION_TOPIC.c_str(), motion_report.c_str());
-        wifiClient.flush();
+        mqttClient.loop();
     }
 
     delay(MEASUREMENT_INTERVAL);
