@@ -14,9 +14,8 @@ REPORT_TOPIC_BLUEPRINT = TopicBlueprint()
 
 @REPORT_TOPIC_BLUEPRINT.topic("/report/#", actions=["message"])
 def handle_report(message: MQTTMessage, **_) -> None:
-    _, device_id, metric_name = message.topic.strip("/").split("/")
-
-    LOG.info(f"Handling {metric_name} report from {device_id}.")
+    _, __, device_id, metric_name = message.topic.strip("/").split("/")
+    isoTimestamp, value = message.payload.decode("utf-8").split("|")
 
     requests.post(
         url=(
@@ -25,8 +24,8 @@ def handle_report(message: MQTTMessage, **_) -> None:
         ),
         json={
             "device_id": device_id,
-            "reported_at": datetime.utcfromtimestamp(message.payload.split(":")[0]),
+            "reported_at": datetime.fromisoformat(isoTimestamp),
             "metric_name": metric_name,
-            "value": message.payload.split(":")[1],
+            "value": value,
         }
     )

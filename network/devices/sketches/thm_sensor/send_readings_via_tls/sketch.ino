@@ -67,7 +67,7 @@ void loop()
 
         String temperature_report;
         temperature_report += now;
-        temperature_report += ":";
+        temperature_report += "|";
         temperature_report += temperature;
 
         Serial.print("Reporting to ");
@@ -84,7 +84,7 @@ void loop()
 
         String humidity_report;
         humidity_report += now;
-        humidity_report += ":";
+        humidity_report += "|";
         humidity_report += humidity;
 
         Serial.print("Reporting to ");
@@ -101,7 +101,7 @@ void loop()
 
         String motion_report;
         motion_report += now;
-        motion_report += ":";
+        motion_report += "|";
         motion_report += motion ? "TRUE" : "FALSE";
 
         Serial.print("Reporting to ");
