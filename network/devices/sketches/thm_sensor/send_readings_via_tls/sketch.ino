@@ -89,7 +89,7 @@ void loop()
 
         Serial.print("Reporting to ");
         Serial.print(HUMIDITY_TOPIC);
-        Serial.print(" -> ");
+        Serial.print("    -> ");
         Serial.println(humidity_report);
 
         mqttClient.publish(HUMIDITY_TOPIC.c_str(), humidity_report.c_str());
@@ -106,7 +106,7 @@ void loop()
 
         Serial.print("Reporting to ");
         Serial.print(MOTION_TOPIC);
-        Serial.print(" -> ");
+        Serial.print("      -> ");
         Serial.println(motion_report);
 
         mqttClient.publish(MOTION_TOPIC.c_str(), motion_report.c_str());
