@@ -182,6 +182,7 @@ class ReportStore:
                         device_id=report.device_id
                     )
                 report.device = known_devices[report.device_id]
+            reports.append(report)
 
         return reports
 
