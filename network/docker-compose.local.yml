@@ -11,7 +11,7 @@ services:
       - LC_ALL=${LANG}
       - LANG=${LANG}
       - VIRTUAL_PORT=${BROKER_PORT}
-      - BACKEND_HOST=host.docker.internal
+      - BACKEND_HOST=http://host.docker.internal
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "0.0.0.0:${BROKER_PORT}:${BROKER_PORT}"
@@ -41,7 +41,7 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_USER=${CLIENT_USER}
       - CLIENT_PASSWORD=${CLIENT_PASSWORD}
-      - DEVICES_HOST=host.docker.internal
+      - DEVICES_HOST=http://host.docker.internal
       - DEVICES_PORT=${DEVICES_PORT}
       - LC_ALL=${LANG}
       - LANG=${LANG}
