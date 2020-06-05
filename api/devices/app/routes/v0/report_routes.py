@@ -23,7 +23,7 @@ def create_report() -> JSONResponse:
         raise APIError(400, "BAD_METRIC_ID")
 
     return JSONResponse({
-        "report": current_app.report_creation_handler.create_report(
+        "report": current_app.report_store.create_report(
             reported_at=request_data["reported_at"],
             device_id=request_data["device_id"],
             metric_id=metric_id,
