@@ -1,7 +1,6 @@
 import os
 import logging
 import requests
-from datetime import datetime
 
 from paho.mqtt.client import MQTTMessage
 from midge.topics.topic_blueprint import TopicBlueprint
@@ -24,7 +23,7 @@ def handle_report(message: MQTTMessage, **_) -> None:
         ),
         json={
             "device_id": device_id,
-            "reported_at": datetime.fromisoformat(isoTimestamp),
+            "reported_at": isoTimestamp,
             "metric_name": metric_name,
             "value": value,
         }
