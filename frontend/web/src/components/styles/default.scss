@@ -1,0 +1,32 @@
+@import 'colours';
+@import 'fonts';
+@import 'variables';
+
+:root,
+html {
+    font-size: $root-font-size;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Barlow', sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background-color: $black;
+    color: $white;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.page-width-wrapper {
+    padding: 0 calc(50% - #{$max-page-width / 2} + #{$min-padding});
+    margin: 0 $min-padding;
+    width: calc(100% - #{$min-padding * 2});
+}

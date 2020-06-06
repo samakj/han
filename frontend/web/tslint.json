@@ -1,0 +1,16 @@
+{
+    "extends": "tslint-config-airbnb",
+    "rules": {
+        "indent": [true, "spaces", 4],
+        "ter-indent": 4,
+        "max-line-length": [true, 120],
+        "template-curly-spacing": ["error", "always"],
+        "class-name": true,
+        "import-name": false,
+        "quotemark": [true, "single", "avoid-escape", "jsx-double"],
+        "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"]
+    },
+    "linterOptions": {
+        "exclude": ["./public/*", "./node_modules/*"]
+    }
+}

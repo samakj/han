@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="<%= htmlWebpackPlugin.options.charset %>">
+    <meta http-equiv="X-UA-Compatible" content="<%= htmlWebpackPlugin.options.XUACompatible %>">
+    <meta name="viewport" content="<%= htmlWebpackPlugin.options.viewport %>">
+    <meta name="description" content="<%= htmlWebpackPlugin.options.description %>">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <% if (htmlWebpackPlugin.options.androidMeta) { %>
+    <!-- Android  -->
+    <meta name="theme-color" content="<%= htmlWebpackPlugin.options.androidMeta.themeColor %>">
+    <meta name="mobile-web-app-capable" content="<%= htmlWebpackPlugin.options.androidMeta.mobileWebAppCapable %>">
+    <% } %>
+    <% if (htmlWebpackPlugin.options.iOSMeta) { %>
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-title" content="<%= htmlWebpackPlugin.options.iOSMeta.mobileWebAppTitle %>">
+    <meta name="apple-mobile-web-app-capable" content="<%= htmlWebpackPlugin.options.iOSMeta.mobileWebAppCapable %>">
+    <meta name="apple-mobile-web-app-status-bar-style" content="<%= htmlWebpackPlugin.options.iOSMeta.mobileWebAppStatusBarStyle %>">
+    <% } %>
+    <% if (htmlWebpackPlugin.options.windowsMeta) { %>
+    <!-- Windows  -->
+    <meta name="msapplication-navbutton-color" content="<%= htmlWebpackPlugin.options.windowsMeta.navbuttonColor %>">
+    <meta name="msapplication-TileColor" content="<%= htmlWebpackPlugin.options.windowsMeta.tileColor %>">
+    <meta name="msapplication-TileImage" content="<%= htmlWebpackPlugin.options.windowsMeta.tileImage %>">
+    <meta name="msapplication-config" content="<%= htmlWebpackPlugin.options.windowsMeta.config %>">
+    <% } %>
+    <% if (htmlWebpackPlugin.options.pinnedSitesMeta) { %>
+    <!-- Pinned Sites  -->
+    <meta name="application-name" content="<%= htmlWebpackPlugin.options.pinnedSitesMeta.applicationName %>">
+    <meta name="msapplication-tooltip" content="<%= htmlWebpackPlugin.options.pinnedSitesMeta.toolTip %>">
+    <meta name="msapplication-starturl" content="<%= htmlWebpackPlugin.options.pinnedSitesMeta.startUrl %>">
+    <% } %>
+    <% for (var filename in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[filename] %>" rel="stylesheet">
+    <% } %>
+</head>
+    <body>
+        <% if (htmlWebpackPlugin.options.appMountId) { %>
+        <div id="<%= htmlWebpackPlugin.options.appMountId %>"></div>
+        <% } %>
+
+        <% for (var chunkname in htmlWebpackPlugin.files.chunks) { %>
+        <script src="<%= htmlWebpackPlugin.files.chunks[chunkname].entry %>"></script>
+        <% } %>
+    </body>
+</html>

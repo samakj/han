@@ -1,0 +1,18 @@
+$root-font-size: 16px;
+$one-px: 0.0125rem;
+
+// Media Type Size Bands
+
+$desktop-last-pixel: 1920px;
+$desktop-first-pixel: 1440px;
+$laptop-last-pixel: $desktop-first-pixel - 1px;
+$laptop-first-pixel: 960px;
+$tablet-last-pixel: $laptop-first-pixel - 1px;
+$tablet-first-pixel: 560px;
+$mobile-last-pixel: $tablet-first-pixel - 1px;
+$mobile-first-pixel: 320px;
+
+// Max page width
+
+$max-page-width: 80rem;
+$min-padding: 1rem;

@@ -1,0 +1,15 @@
+{
+    "extends": "eslint-config-airbnb",
+    "globals": {},
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "template-curly-spacing": ["error", "always"]
+    },
+    "plugins": [
+        "react"
+    ]
+}
