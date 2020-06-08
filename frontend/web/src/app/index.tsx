@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 
 import { loadStore } from '@han/store';
 import '@han/components/styles/default.scss';
+import { Navigation } from '@han/components/navigation';
 
 export interface AppPropsType {
     preloadedState: object;
@@ -21,7 +22,7 @@ export const App: React.FunctionComponent<AppPropsType> = ({
     return (
         <Provider store={store}>
             <div className="page-wrapper">
-                <nav></nav>
+                <Navigation />
                 {children}
             </div>
         </Provider>
