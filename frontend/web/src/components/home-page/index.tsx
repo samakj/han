@@ -5,7 +5,7 @@ import { HomePagePropsType } from '@han/components/home-page/types';
 
 export const HomePage: React.FunctionComponent<HomePagePropsType> = ({}) => {
     return (
-        <main className="home-page page-width-wrapper">
+        <main className="home-page">
             <h1>Home Page</h1>
         </main>
     );

@@ -20,7 +20,10 @@ export const App: React.FunctionComponent<AppPropsType> = ({
 
     return (
         <Provider store={store}>
-            {children}
+            <div className="page-wrapper">
+                <nav></nav>
+                {children}
+            </div>
         </Provider>
     );
 };
