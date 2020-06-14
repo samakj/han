@@ -24,7 +24,7 @@ String payload;
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("Starting thm_sensor log json sketch...");
 
     pinMode(ONBOARD_LED_PIN, OUTPUT);
