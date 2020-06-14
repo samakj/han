@@ -256,3 +256,34 @@ void createReportTopics()
     MOTION_TOPIC += "/";
     MOTION_TOPIC += "motion";
 }
+
+void setTimestampMillisOffset()
+{
+    time_t tm_loop = time(nullptr);
+    int ts_loop = mktime(gmtime(&tm_loop));
+    int current_millis = millis();
+
+    if (ts_loop != ts_initial)
+    {
+        millis_offset = current_millis % 1000;
+        Serial.print("Offset found to be ");
+        Serial.print(millis_offset);
+        Serial.println("ms.");
+    }
+}
+
+String getIsoTimestamp()
+{
+    String isoTimestamp;
+
+    char datetime_buffer[23];
+    time_t tm = time(nullptr);
+    strftime(datetime_buffer, 23, "%FT%T", gmtime(&tm));
+    isoTimestamp += datetime_buffer;
+
+    char milliseconds_buffer[5];
+    sprintf(milliseconds_buffer, ".%03d", (millis() - millis_offset) % 1000);
+    isoTimestamp += milliseconds_buffer;
+
+    return isoTimestamp;
+}
