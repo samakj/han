@@ -11,7 +11,9 @@
 //Constants
 #define DHT_TYPE DHT22
 #define MQTT_SOCKET_TIMEOUT 60
-#define MEASUREMENT_INTERVAL 2000
+#define TEMPERATURE_INTERVAL 2000
+#define HUMIDITY_INTERVAL 2000
+#define MOTION_INTERVAL 10
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);
 WiFiClientSecure wifiClient;
@@ -20,9 +22,18 @@ PubSubClient mqttClient(wifiClient);
 //Variables
 byte MACAddressByteArray[6];
 String MACAddress;
+
+int millis_offset = -1;
+time_t tm_initial = time(nullptr);
+int ts_initial = mktime(gmtime(&tm_initial));
+bool millis_offset_message_sent = false;
+
 float humidity;
 float temperature;
 bool motion;
+int humidity_last_test = -1;
+int temperature_last_test = -1;
+int motion_last_test = -1;
 
 String HUMIDITY_TOPIC;
 String TEMPERATURE_TOPIC;
@@ -49,71 +60,23 @@ void setup()
 
 void loop()
 {
+    if (millis_offset == -1)
+    {
+        if (!millis_offset_message_sent) {
+            Serial.println("Getting millis offset...");
+            millis_offset_message_sent = true;
+        }
+        setTimestampMillisOffset();
+        return;
+    }
+
     connectToWifi();
     connectToMqtt();
     mqttClient.loop();
 
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-    bool m = digitalRead(MOTION_SENSOR_PIN);
-
-    time_t tm = time(nullptr);
-    char now[29];
-    strftime(now, 29, "%FT%T+00:00", gmtime(&tm));
-
-    if (!isnan(t) && t != temperature)
-    {
-        temperature = t;
-
-        String temperature_report;
-        temperature_report += now;
-        temperature_report += "|";
-        temperature_report += temperature;
-
-        Serial.print("Reporting to ");
-        Serial.print(TEMPERATURE_TOPIC);
-        Serial.print(" -> ");
-        Serial.println(temperature_report);
-
-        mqttClient.publish(TEMPERATURE_TOPIC.c_str(), temperature_report.c_str());
-        mqttClient.loop();
-    }
-    if (!isnan(h) && h != humidity)
-    {
-        humidity = h;
-
-        String humidity_report;
-        humidity_report += now;
-        humidity_report += "|";
-        humidity_report += humidity;
-
-        Serial.print("Reporting to ");
-        Serial.print(HUMIDITY_TOPIC);
-        Serial.print("    -> ");
-        Serial.println(humidity_report);
-
-        mqttClient.publish(HUMIDITY_TOPIC.c_str(), humidity_report.c_str());
-        mqttClient.loop();
-    }
-    if (!isnan(m) && m != motion)
-    {
-        motion = m;
-
-        String motion_report;
-        motion_report += now;
-        motion_report += "|";
-        motion_report += motion ? "TRUE" : "FALSE";
-
-        Serial.print("Reporting to ");
-        Serial.print(MOTION_TOPIC);
-        Serial.print("      -> ");
-        Serial.println(motion_report);
-
-        mqttClient.publish(MOTION_TOPIC.c_str(), motion_report.c_str());
-        mqttClient.loop();
-    }
-
-    delay(MEASUREMENT_INTERVAL);
+    checkHumidityMeasurement();
+    checkTemperatureMeasurement();
+    checkMotionMeasurement();
 }
 
 void connectToWifi()
@@ -185,6 +148,8 @@ void connectToNtpTime()
         i++;
         delay(250);
     }
+
+    millis_offset = -1;
 
     Serial.println("");
     Serial.print("Connected to NTP Server after ");
