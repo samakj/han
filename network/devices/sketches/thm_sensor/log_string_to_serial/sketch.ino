@@ -6,6 +6,7 @@
 //Constants
 #define ONBOARD_LED_PIN 13
 #define DHT_TYPE DHT22
+#define MEASUREMENT_INTERVAL 2000
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);
 
@@ -30,21 +31,50 @@ void setup()
 
 void loop()
 {
-    humidity = dht.readHumidity();
-    temperature = dht.readTemperature();
-    motion = digitalRead(MOTION_SENSOR_PIN);
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    bool m = digitalRead(MOTION_SENSOR_PIN);
 
-    String log;
-    char buffer[10];
+    time_t tm = time(nullptr);
+    char now[29];
+    strftime(now, 29, "%FT%T+00:00", gmtime(&tm));
 
-    log += "Temperature: ";
-    log += dtostrf(temperature, 2, 2, buffer);
-    log += "°c | Humidity: ";
-    log += dtostrf(humidity, 2, 2, buffer);
-    log += "% | Motion: ";
-    log += motion ? "TRUE" : "FALSE";
+    if (!isnan(t) && t != temperature)
+    {
+        temperature = t;
 
-    Serial.println(log);
-    delay(2000);
+        String temperature_report;
+        temperature_report += now;
+        temperature_report += "| Temperature changed to: ";
+        temperature_report += temperature;
+        temperature_report += "°c";
+
+        Serial.println(temperature_report);
+    }
+    if (!isnan(h) && h != humidity)
+    {
+        humidity = h;
+
+        String humidity_report;
+        humidity_report += now;
+        humidity_report += "| Humidity changed to: ";
+        humidity_report += humidity;
+        humidity_report += "%";
+
+        Serial.println(humidity_report);
+    }
+    if (!isnan(m) && m != motion)
+    {
+        motion = m;
+
+        String motion_report;
+        motion_report += now;
+        motion_report += "| Motion changed to: ";
+        motion_report += motion ? "TRUE" : "FALSE";
+
+        Serial.println(motion_report);
+    }
+
+    delay(MEASUREMENT_INTERVAL);
 }
 
