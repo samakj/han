@@ -10,13 +10,11 @@ def create_device() -> JSONResponse:
     return JSONResponse({
         "device": current_app.device_store.create_device(
             device_id=request_data["device_id"],
+            device_type_id=request_data["device_type_id"],
+            latest_ping=request_data.get("latest_ping", None),
             location_tag_ids=(
                 set(request_data["location_tag_ids"])
                 if request_data.get("location_tag_ids", None) is not None else None
-            ),
-            metric_ids=(
-                set(request_data["metric_ids"])
-                if request_data.get("metric_ids", None) is not None else None
             ),
         )
     })
@@ -38,6 +36,7 @@ def get_devices() -> JSONResponse:
         "devices": current_app.device_store.get_devices(
             fields=set(request.args.getlist("fields")),
             device_id=set(request.args.getlist("device_id")),
+            device_type_id=set(request.args.getlist("device_type_id", int)),
             order_by=request.args.get("order_by", None),
             order_by_direction=request.args.get("order_by_direction", None),
         )
@@ -46,7 +45,14 @@ def get_devices() -> JSONResponse:
 
 @DEVICES_V0_BLUEPRINT.route("/devices/<string:device_id>/", methods=["PATCH"])
 def update_device(device_id: str) -> JSONResponse:
-    return JSONResponse({"device": current_app.device_store.update_device(device_id=device_id)})
+    request_data = request.get_json()
+    return JSONResponse({
+        "device": current_app.device_store.update_device(
+            device_id=device_id,
+            device_type_id=request_data.get("device_type_id", None),
+            latest_ping=request_data.get("latest_ping", None),
+        )
+    })
 
 
 @DEVICES_V0_BLUEPRINT.route("/devices/<string:device_id>/", methods=["DELETE"])

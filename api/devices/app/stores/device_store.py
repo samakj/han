@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional, Set, Union
 
 from sqlalchemy import text
@@ -18,7 +19,7 @@ from stores.queries.device_queries import (
     LOAD_DEVICES_FROM_BACKUP,
 )
 
-ALL_FIELDS = {"device_id", "device_type_id"}
+ALL_FIELDS = {"device_id", "device_type_id", "latest_ping"}
 
 
 class DeviceStore:
@@ -38,12 +39,14 @@ class DeviceStore:
         self,
         device_id: str,
         device_type_id: int,
+        latest_ping: Optional[datetime] = None,
         location_tag_ids: Optional[Set[int]] = None,
     ) -> Device:
         db_response = self.db.execute(
             text(CREATE_DEVICE_QUERY),
             device_id=device_id,
             device_type_id=device_type_id,
+            latest_ping=latest_ping,
         ).fetchone()
 
         fields = ALL_FIELDS
@@ -145,11 +148,14 @@ class DeviceStore:
         self,
         device_id: str,
         device_type_id: Optional[int] = None,
+        latest_ping: Optional[datetime] = None,
     ) -> Optional[Device]:
         set_conditions: Set[str] = set()
 
         if device_type_id:
             set_conditions.add("device_type_id = :device_type_id")
+        if latest_ping:
+            set_conditions.add("latest_ping = :latest_ping")
 
         if not set_conditions:
             return self.get_device(device_id=device_id)
@@ -157,11 +163,14 @@ class DeviceStore:
         db_response = self.db.execute(
             text(UPDATE_DEVICE_QUERY.format(set_conditions=", ".join(set_conditions))),
             device_id=device_id,
+            device_type_id=device_type_id,
+            latest_ping=latest_ping,
         ).fetchone()
 
         return Device(
             device_id=db_response["device_id"],
             device_type_id=db_response["device_type_id"],
+            latest_ping=db_response["latest_ping"],
         ) if db_response else None
 
     def delete_device(self, device_id: str) -> Optional[int]:
