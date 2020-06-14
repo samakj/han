@@ -2,5 +2,6 @@
     "MQTT_HOST": "192.168.0.xx",
     "MQTT_PORT": 1883,
     "V0_REPORT_TOPIC_ROOT": "/v0/report/",
-    "V0_COMMAND_TOPIC_ROOT": "/v0/command/"
+    "V0_COMMAND_TOPIC_ROOT": "/v0/command/",
+    "V0_META_TOPIC_ROOT": "v0/meta"
 }

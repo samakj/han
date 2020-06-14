@@ -14,6 +14,7 @@
 #define TEMPERATURE_INTERVAL 2000
 #define HUMIDITY_INTERVAL 2000
 #define MOTION_INTERVAL 10
+#define PING_INTERVAL 1000
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);
 WiFiClientSecure wifiClient;
@@ -38,6 +39,8 @@ int motion_last_test = -1;
 String HUMIDITY_TOPIC;
 String TEMPERATURE_TOPIC;
 String MOTION_TOPIC;
+String PING_TOPIC;
+int last_ping = -1;
 
 void setup()
 {
@@ -77,6 +80,7 @@ void loop()
     checkHumidityMeasurement();
     checkTemperatureMeasurement();
     checkMotionMeasurement();
+    pingMqtt();
 }
 
 void connectToWifi()
@@ -220,6 +224,12 @@ void createReportTopics()
     MOTION_TOPIC += NODE_ID;
     MOTION_TOPIC += "/";
     MOTION_TOPIC += "motion";
+
+    PING_TOPIC += V0_META_TOPIC_ROOT;
+    PING_TOPIC += "/";
+    PING_TOPIC += NODE_ID;
+    PING_TOPIC += "/";
+    PING_TOPIC += "ping";
 }
 
 void setTimestampMillisOffset()
@@ -337,5 +347,21 @@ void checkMotionMeasurement()
         }
 
         motion_last_test = current_millis;
+    }
+}
+
+void pingMqtt()
+{
+    int current_millis = millis();
+    if (last_ping == -1 || current_millis - last_ping > PING_INTERVAL)
+    {
+        String motion_report;
+        ping_report += getIsoTimestamp();
+        ping_report += "|ping";
+
+        mqttClient.publish(PING_TOPIC.c_str(), ping_report.c_str());
+        mqttClient.loop();
+
+        last_ping = current_millis;
     }
 }
