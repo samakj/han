@@ -287,3 +287,90 @@ String getIsoTimestamp()
 
     return isoTimestamp;
 }
+
+void checkTemperatureMeasurement()
+{
+    int current_millis = millis();
+    if (temperature_last_test == -1 || current_millis - temperature_last_test > TEMPERATURE_INTERVAL)
+    {
+        float t = dht.readTemperature();
+
+        if (!isnan(t) && t != temperature)
+        {
+            temperature = t;
+
+            String temperature_report;
+            temperature_report += getIsoTimestamp();
+            temperature_report += "|";
+            temperature_report += temperature;
+
+            Serial.print("Reporting to ");
+            Serial.print(TEMPERATURE_TOPIC);
+            Serial.print(" -> ");
+            Serial.println(temperature_report);
+
+            mqttClient.publish(TEMPERATURE_TOPIC.c_str(), temperature_report.c_str());
+            mqttClient.loop();
+        }
+
+        temperature_last_test = current_millis;
+    }
+}
+
+void checkHumidityMeasurement()
+{
+    int current_millis = millis();
+    if (humidity_last_test == -1 || current_millis - humidity_last_test > HUMIDITY_INTERVAL)
+    {
+        float h = dht.readHumidity();
+
+        if (!isnan(h) && h != humidity)
+        {
+            humidity = h;
+
+            String humidity_report;
+            humidity_report += getIsoTimestamp();
+            humidity_report += "|";
+            humidity_report += humidity;
+
+            Serial.print("Reporting to ");
+            Serial.print(HUMIDITY_TOPIC);
+            Serial.print("    -> ");
+            Serial.println(humidity_report);
+
+            mqttClient.publish(HUMIDITY_TOPIC.c_str(), humidity_report.c_str());
+            mqttClient.loop();
+        }
+
+        humidity_last_test = current_millis;
+    }
+}
+
+void checkMotionMeasurement()
+{
+    int current_millis = millis();
+    if (motion_last_test == -1 || current_millis - motion_last_test > MOTION_INTERVAL)
+    {
+        bool m = digitalRead(MOTION_SENSOR_PIN);
+
+        if (!isnan(m) && m != motion)
+        {
+            motion = m;
+
+            String motion_report;
+            motion_report += getIsoTimestamp();
+            motion_report += "|";
+            motion_report += motion ? "TRUE" : "FALSE";
+
+            Serial.print("Reporting to ");
+            Serial.print(MOTION_TOPIC);
+            Serial.print("      -> ");
+            Serial.println(motion_report);
+
+            mqttClient.publish(MOTION_TOPIC.c_str(), motion_report.c_str());
+            mqttClient.loop();
+        }
+
+        motion_last_test = current_millis;
+    }
+}
