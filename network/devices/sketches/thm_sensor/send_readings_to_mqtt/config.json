@@ -1,9 +1,0 @@
-{
-    "configs": [
-        "mqtt.json",
-        "wifi.json"
-    ],
-    "variables": {
-        "MEASUREMENT_INTERVAL": 2000
-    }
-}

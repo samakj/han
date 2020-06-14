@@ -1,8 +1,0 @@
-{
-    "certs": true,
-    "configs": [
-        "mqtt.json",
-        "time.json",
-        "wifi.json"
-    ]
-}
