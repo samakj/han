@@ -6,7 +6,9 @@
 //Constants
 #define ONBOARD_LED_PIN 13
 #define DHT_TYPE DHT22
-#define MEASUREMENT_INTERVAL 2000
+#define TEMPERATURE_INTERVAL 2000
+#define HUMIDITY_INTERVAL 2000
+#define MOTION_INTERVAL 10
 
 DHT dht(DHT_SENSOR_PIN, DHT_TYPE);
 
@@ -15,6 +17,9 @@ DHT dht(DHT_SENSOR_PIN, DHT_TYPE);
 float humidity;
 float temperature;
 bool motion;
+int humidity_last_test = -1;
+int temperature_last_test = -1;
+int motion_last_test = -1;
 
 void setup()
 {
@@ -31,50 +36,91 @@ void setup()
 
 void loop()
 {
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-    bool m = digitalRead(MOTION_SENSOR_PIN);
+    checkHumidityMeasurement();
+    checkTemperatureMeasurement();
+    checkMotionMeasurement();
+}
 
-    time_t tm = time(nullptr);
-    char now[29];
-    strftime(now, 29, "%FT%T+00:00", gmtime(&tm));
-
-    if (!isnan(t) && t != temperature)
+void checkTemperatureMeasurement()
+{
+    int current_millis = millis();
+    if (temperature_last_test == -1 || current_millis - temperature_last_test > TEMPERATURE_INTERVAL)
     {
-        temperature = t;
+        float t = dht.readTemperature();
 
-        String temperature_report;
-        temperature_report += now;
-        temperature_report += "| Temperature changed to: ";
-        temperature_report += temperature;
-        temperature_report += "°c";
+        if (!isnan(t) && t != temperature)
+        {
+            temperature = t;
 
-        Serial.println(temperature_report);
+            time_t tm = time(nullptr);
+            char isoTimestamp[29];
+            strftime(isoTimestamp, 29, "%FT%T+00:00", gmtime(&tm));
+
+            String temperature_report;
+            temperature_report += isoTimestamp;
+            temperature_report += "| Temperature changed to: ";
+            temperature_report += temperature;
+            temperature_report += "°c";
+
+            Serial.println(temperature_report);
+        }
+
+        temperature_last_test = current_millis;
     }
-    if (!isnan(h) && h != humidity)
+}
+
+void checkHumidityMeasurement()
+{
+    int current_millis = millis();
+    if (humidity_last_test == -1 || current_millis - humidity_last_test > HUMIDITY_INTERVAL)
     {
-        humidity = h;
+        float h = dht.readHumidity();
 
-        String humidity_report;
-        humidity_report += now;
-        humidity_report += "| Humidity changed to: ";
-        humidity_report += humidity;
-        humidity_report += "%";
+        if (!isnan(h) && h != humidity)
+        {
+            humidity = h;
 
-        Serial.println(humidity_report);
+            time_t tm = time(nullptr);
+            char isoTimestamp[29];
+            strftime(isoTimestamp, 29, "%FT%T+00:00", gmtime(&tm));
+
+            String humidity_report;
+            humidity_report += isoTimestamp;
+            humidity_report += "| Humidity changed to: ";
+            humidity_report += humidity;
+            humidity_report += "%";
+
+            Serial.println(humidity_report);
+        }
+
+        humidity_last_test = current_millis;
     }
-    if (!isnan(m) && m != motion)
+}
+
+void checkMotionMeasurement()
+{
+    int current_millis = millis();
+    if (motion_last_test == -1 || current_millis - motion_last_test > MOTION_INTERVAL)
     {
-        motion = m;
+        bool m = digitalRead(MOTION_SENSOR_PIN);
 
-        String motion_report;
-        motion_report += now;
-        motion_report += "| Motion changed to: ";
-        motion_report += motion ? "TRUE" : "FALSE";
+        if (!isnan(m) && m != motion)
+        {
+            motion = m;
 
-        Serial.println(motion_report);
+            time_t tm = time(nullptr);
+            char isoTimestamp[29];
+            strftime(isoTimestamp, 29, "%FT%T+00:00", gmtime(&tm));
+
+            String motion_report;
+            motion_report += isoTimestamp;
+            motion_report += "| Motion changed to: ";
+            motion_report += motion ? "TRUE" : "FALSE";
+
+            Serial.println(motion_report);
+        }
+
+        motion_last_test = current_millis;
     }
-
-    delay(MEASUREMENT_INTERVAL);
 }
 
